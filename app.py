@@ -309,11 +309,11 @@ app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024
 # home
 @app.route('/')
 def home():
-    return render_template("login.html")   # pehle login page
+    return render_template("index.html")   # pehle login page
 #FORM
 
 
-@app.route('/index')
+@app.route('/form')
 def form_page():
 
     role = request.args.get('role')  # central / state
@@ -321,12 +321,12 @@ def form_page():
     state = request.args.get('state')
     if role == "central":
         # Central user → state select karega
-        return render_template("index.html", role="central", selected_state=None)
+        return render_template("form.html", role="central", selected_state=None)
 
     else:
         # State user → fixed state
         state = session.get('state')
-        return render_template("index.html", role="state", selected_state=state)
+        return render_template("form.html", role="state", selected_state=state)
 
 
 @app.route('/submit', methods=['POST'])
