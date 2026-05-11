@@ -1,0 +1,61 @@
+<div style="
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:15px 30px;
+    background: linear-gradient(135deg, #ffffff, #e8f5e9);
+    border-radius:12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    margin-bottom:20px;
+">
+
+    <!-- LEFT: ASHOKA EMBLEM -->
+    <img src="{{ url_for('static', filename='emblam.jpg') }}" 
+         alt="India Emblem"
+         style="
+            width:80px;
+            height:auto;
+            filter: grayscale(100%);
+            opacity:0.9;
+            transition: transform 0.3s;
+         "
+         onmouseover="this.style.transform='scale(1.1)'"
+         onmouseout="this.style.transform='scale(1)'"
+    >
+
+    <!-- CENTER TEXT -->
+    <div style="text-align:center; flex-grow:1;">
+        <h2 style="
+            margin:0;
+            font-size:28px;
+            color:#2e7d32;
+            letter-spacing:1px;
+        ">
+            राष्ट्रीय आयुष मिशन
+        </h2>
+
+        <h3 style="
+            margin:5px 0 0;
+            font-size:20px;
+            color:#1b5e20;
+            font-weight:600;
+        ">
+            National Ayush Mission (NAM)
+        </h3>
+    </div>
+
+    <!-- RIGHT: NAM LOGO -->
+    <img src="{{ url_for('static', filename='nam.jpg') }}" 
+         alt="NAM Logo"
+         style="
+            width:90px;
+            height:90px;
+            border-radius:50%;
+            box-shadow:0 4px 10px rgba(0,0,0,0.2);
+            transition: transform 0.3s;
+         "
+         onmouseover="this.style.transform='scale(1.1)'"
+         onmouseout="this.style.transform='scale(1)'"
+    >
+
+</div>

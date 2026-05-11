@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: #f5f7fa;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .chart-container {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        canvas {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+
+<body>
+
+{% include 'logos.html' %}
+
+<div class="chart-container">
+
+    <canvas id="chart1" width="350" height="250"></canvas>
+    <canvas id="chart2" width="300" height="250"></canvas>
+
+</div>
+
+<script>
+
+// 🔥 GLOBAL CHART INSTANCE
+let chart1 = null;
+let chart2 = null;
+
+
+// ================= CENTRAL =================
+function loadCentralCharts() {
+
+    fetch("/report_data")
+    .then(res => res.json())
+    .then(data => {
+
+        let states = Object.keys(data);
+        let totals = [];
+        let yearsCount = [];
+
+        states.forEach(state => {
+
+            let years = Object.keys(data[state]);
+            yearsCount.push(years.length);
+
+            let total = 0;
+
+            years.forEach(y => {
+                let d = data[state][y];
+
+                total +=
+                    d["Ayush Services"] +
+                    d["Educational Institutions"] +
+                    d["Medicinal Plants"] +
+                    d["Quality Control"] +
+                    d["Flexi Pool"] +
+                    d["Admin Cost"];
+            });
+
+            totals.push(total);
+        });
+
+        // 🔥 DESTROY OLD
+        if (chart1) chart1.destroy();
+        if (chart2) chart2.destroy();
+
+        chart1 = new Chart(document.getElementById("chart1"), {
+            type: "bar",
+            data: {
+                labels: states,
+                datasets: [{
+                    label: "Total Utilization",
+                    data: totals
+                }]
+            }
+        });
+
+        chart2 = new Chart(document.getElementById("chart2"), {
+            type: "doughnut",
+            data: {
+                labels: states,
+                datasets: [{
+                    label: "Years Filled",
+                    data: yearsCount
+                }]
+            }
+        });
+
+    });
+}
+
+
+// ================= STATE =================
+function loadStateCharts() {
+
+    fetch("/report_data")
+    .then(res => res.json())
+    .then(data => {
+
+        let state = Object.keys(data)[0];
+        if (!state) return;
+
+        let years = Object.keys(data[state]);
+        let totals = [];
+
+        years.forEach(y => {
+            let d = data[state][y];
+
+            totals.push(
+                d["Ayush Services"] +
+                d["Educational Institutions"] +
+                d["Medicinal Plants"] +
+                d["Quality Control"] +
+                d["Flexi Pool"] +
+                d["Admin Cost"]
+            );
+        });
+
+        if (chart1) chart1.destroy();
+
+        chart1 = new Chart(document.getElementById("chart1"), {
+            type: "bar",
+            data: {
+                labels: years,
+                datasets: [{
+                    label: "Year-wise Utilization",
+                    data: totals
+                }]
+            }
+        });
+
+    });
+
+    fetch("/state_year_status")
+    .then(res => res.json())
+    .then(data => {
+
+        let years = data.map(d => d.year);
+        let values = data.map(d => d.status);
+
+        if (chart2) chart2.destroy();
+
+        chart2 = new Chart(document.getElementById("chart2"), {
+            type: "bar",
+            data: {
+                labels: years,
+                datasets: [{
+                    label: "Submission Status",
+                    data: values
+                }]
+            }
+        });
+
+    });
+}
+
+
+// ================= MAIN LOAD FUNCTION =================
+function loadDashboardCharts() {
+
+    let role = "{{ session.get('role') }}";
+
+    console.log("Dashboard role:", role);
+
+    if (role === "central") {
+        loadCentralCharts();
+    } else {
+        loadStateCharts();
+    }
+}
+
+
+// 🔥 IMPORTANT: auto load hata diya (NO window.onload)
+
+</script>
+
+</body>
+</html>

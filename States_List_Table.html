@@ -1,0 +1,144 @@
+<!-- 🔥 STATE (LOCKED FROM LOGIN) -->
+
+
+<style>
+/* 🔷 Table Container */
+#stateTable {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 14px;
+    margin-top: 15px;
+}
+
+/* 🔷 Header */
+#stateTable th {
+    background: linear-gradient(45deg, #007bff, #00c6ff);
+    color: white;
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: center;
+}
+
+/* 🔷 Rows */
+#stateTable td {
+    padding: 8px;
+    border: 1px solid #ddd;
+    text-align: center;
+}
+
+/* 🔷 Alternate row color */
+#stateTable tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+/* 🔷 Hover effect */
+#stateTable tr:hover {
+    background-color: #e6f7ff;
+    transition: 0.3s;
+}
+
+/* 🔷 Serial number column */
+#stateTable td:first-child {
+    font-weight: bold;
+}
+
+/* 🔷 State name column */
+#stateTable td:nth-child(2) {
+    text-align: left;
+    font-weight: 500;
+}
+
+/* 🔷 ✔ Submitted */
+.status-ok {
+    color: #28a745;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+/* 🔷 Awaited */
+.status-pending {
+    color: white;
+    background: #dc3545;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+}
+
+/* 🔷 Table shadow */
+#stateTable {
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+</style>
+<h3>States Submitted Data</h3>
+
+<table id="stateTable" border="1">
+<thead>
+<tr>
+<th>S.No</th>
+<th>State/UT</th>
+<th>2020-21</th>
+<th>2021-22</th>
+<th>2022-23</th>
+<th>2023-24</th>
+<th>2024-25</th>
+<th>2025-26</th>
+<th>2026-27</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+
+<script>
+function loadStates(data) {
+
+    let tbody = document.querySelector("#stateTable tbody");
+    tbody.innerHTML = "";
+
+    let years = ["2020-21","2021-22","2022-23","2023-24","2024-25","2025-26","2026-27"];
+
+    let i = 1;
+
+    let sortedStates = Object.keys(data).sort();
+
+    for (let state of sortedStates) {
+
+        let row = `<tr>
+            <td>${i++}</td>
+            <td>${state}</td>
+        `;
+
+        years.forEach(y => {
+            if (data[state][y]) {
+                row += `<td style="color:green;font-weight:bold;">✔</td>`;
+            } else {
+                row += `<td class="status-pending">Awaited</td>`;
+            }
+        });
+
+        row += "</tr>";
+
+        tbody.innerHTML += row;
+    }
+}
+
+// 🔥 ONLY ONE FETCH
+fetch("/report_data?t=" + Date.now())
+.then(res => {
+    if (!res.ok) throw new Error("Server error");
+    return res.json();
+})
+.then(data => {
+
+    let stateData = {};
+
+    for (let state in data) {
+        stateData[state] = {};
+
+        for (let year in data[state]) {
+            stateData[state][year] = true;
+        }
+    }
+
+    loadStates(stateData);
+});
+</script>

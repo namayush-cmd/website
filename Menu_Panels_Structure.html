@@ -1,0 +1,3214 @@
+<style>
+.menu {
+    display: flex;
+    background-color: #2c3e50;
+}
+.menu button {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background: none;
+    color: white;
+    cursor: pointer;
+}
+.menu button:hover {
+    background-color: #34495e;
+}
+.panel {
+    display: none;
+}
+.menu button.active {
+    background-color: #00c6ff;
+    color: black;
+    font-weight: bold;
+}
+
+.panel.active {
+    display: block;
+}
+#reportPanel th {
+    position: sticky;
+    top: 0;
+    background: #2c3e50;
+    color: white;
+    z-index: 2;
+}
+table {
+    width: 100%;
+}
+
+th, td {
+    padding: 6px;
+    text-align: center;
+    word-break: break-word;
+}
+
+#expenditureTable {
+    width: 100%;
+    overflow-x: auto;
+}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+<div class="menu">
+
+	<button type="button" onclick="showPanel('form', this)">Form for Submission</button>
+	<button type="button" onclick="showPanel('report', this)">Report</button>
+	<button type="button" onclick="showPanel('guidelines', this)">Guidelines</button>
+	
+</div>
+
+
+
+<!-- REPORT -->
+<div id="reportPanel" class="panel">
+
+    <h2>Report</h2>
+
+    <select id="reportType" onchange="showReportSection()">
+        <option value="">-- Select Report --</option>
+        <option value="ayushservices">Status of Ayush Services</option>
+        <option value="aei">Status of Ayush Educational Institutions</option>
+        <option value="flexi">Status of Flexi Pool</option>
+        <option value="monthly">Overall Integrated Ayush Monthly Summary</option>
+        <option value="states">States Submitted Data</option>
+        <option value="summary">Overall State Summary</option>
+		<option value="expenditure">Status of Expenditure</option>
+        <option value="manpower">Status of Manpower</option>
+        <option value="medicines">Status of Ayush Medicines</option>
+		<option value="aam">Status of Ayush Facilities</option>
+
+    </select>
+
+    <br><br>
+
+    <!-- ✅🔥 AYUSH SERVICES (ALAG BLOCK) -->
+	<div id="asSection" style="display:none;">
+
+		<h3>Status of Ayush Services Activities</h3>
+
+		<!-- 🔽 FILTER -->
+		<div style="margin-bottom:10px;">
+			<label>State:</label>
+			<select id="colocationStateFilter">
+				<option value="">All</option>
+			</select>
+			<label>Year:</label>
+			<select id="colocationYearFilter">
+				<option value="">All</option>
+			</select>
+
+			<button id="activityApplyBtn">
+				Apply
+			</button>
+		</div>
+
+
+		<!-- 🔘 MAIN TOGGLE BUTTONS -->
+		<div style="margin-bottom:10px;">
+			<button onclick="showColocation()">
+				Co-location
+			</button>
+
+			<button onclick="showDrugsSupply()">
+				Drugs Supply
+			</button>
+
+			<button onclick="showHospitals()">
+				Hospitals
+			</button>
+
+			<button onclick="showDispensaries()">
+				Dispensaries
+			</button>
+
+			<button onclick="showIntegratedHospitals()">
+				Integrated Hospitals
+			</button>
+
+			<button onclick="showProgrammes()">
+				Programmes
+			</button>
+
+			<button onclick="showAyushGram()">
+				Ayush Gram
+			</button>
+		</div>
+
+
+		<!-- ================== 1. CO-LOCATION ================== -->
+		<div id="colocationBlock">
+
+			<h3>Co-location of Ayush facilities at PHCs, CHCs and DHs</h3>
+
+			<button onclick="toggleSection('Summaryofphcs')">PHCs</button>
+			<button onclick="toggleSection('Summaryofchcs')">CHCs</button>
+			<button onclick="toggleSection('SummaryofDHs')">DHs</button>
+
+			<h4>Summary of PHCs</h4>
+			<div id="Summaryofphcs"></div>
+
+			<h4>Summary of CHCs</h4>
+			<div id="Summaryofchcs"></div>
+
+			<h4>Summary of DHs</h4>
+			<div id="SummaryofDHs"></div>
+		</div>
+
+		<!-- ================== 2. DRUGS ================== -->
+		<div id="drugsBlock" style="display:none;">
+
+			<h3>Supply of Essential Drugs</h3>
+
+			<h4>a. Government AYUSH Hospitals</h4>
+			<div id="drugHospitals"></div>
+
+			<h4>b. Government Dispensaries</h4>
+			<div id="drugDispensaries"></div>
+
+			<h4>c. Teaching Institutions</h4>
+			<div id="drugTeaching"></div>
+
+			<h4>d. Ayushman Arogya Mandir</h4>
+			<div id="drugAAM"></div>
+
+			<h4>e. Sub Centers (NHM)</h4>
+			<div id="drugSubCenters"></div>
+
+		</div>
+
+		<!-- ================== 3. HOSPITAL UPGRADE ================== -->
+		<div id="hospitalBlock" style="display:none;">
+
+			<h3>Upgradation of AYUSH Hospitals</h3>
+
+			<div id="hospitalUpgrade"></div>
+
+		</div>
+
+		<!-- ================== 4. DISPENSARIES ================== -->
+		<div id="dispensaryBlock" style="display:none;">
+
+			<h3>Ayush Dispensaries</h3>
+
+			<h4>Upgradation</h4>
+			<div id="dispUpgrade"></div>
+
+			<h4>Construction</h4>
+			<div id="dispConstruction"></div>
+
+		</div>
+
+		<!-- ================== 5. INTEGRATED HOSPITALS ================== -->
+		<div id="integratedBlock" style="display:none;">
+
+			<h3>Integrated AYUSH Hospitals</h3>
+
+			<h4>10 Bedded</h4>
+			<div id="hospital10"></div>
+
+			<h4>30 Bedded</h4>
+			<div id="hospital30"></div>
+
+			<h4>50 Bedded</h4>
+			<div id="hospital50"></div>
+
+		</div>
+
+		<!-- ================== 6. PROGRAMMES ================== -->
+		<div id="programmeBlock" style="display:none;">
+
+			<h3>AYUSH Public Health Programmes</h3>
+
+			<h4>Osteoarthritis Programme</h4>
+			<div id="osteo"></div>
+
+			<h4>NPCDCS Integration</h4>
+			<div id="npcdcs"></div>
+
+			<h4>SUPRAJA</h4>
+			<div id="supraja"></div>
+
+			<h4>VAYO MITRA</h4>
+			<div id="vayo"></div>
+
+			<h4>AYURVIDYA</h4>
+			<div id="ayurvidya"></div>
+
+			<h4>Mobile Medical Unit</h4>
+			<div id="mobileUnit"></div>
+
+			<h4>KARUNYA</h4>
+			<div id="karunya"></div>
+
+			<h4>MMDP</h4>
+			<div id="mmdp"></div>
+
+		</div>
+
+		<!-- ================== 7. AYUSH GRAM ================== -->
+		<div id="ayushgramBlock" style="display:none;">
+
+			<h3>AYUSH Gram</h3>
+
+			<div id="ayushGramData"></div>
+
+		</div>
+
+	</div>
+
+
+
+    <!-- ✅ AEI SECTION -->
+    <div id="aeiSection" style="display:none;">
+        <h3>Status of Upgraded Ayush Educational Institutions</h3>
+
+        <div style="margin-bottom:10px;">
+            <label>State:</label>
+            <select id="stateFilter" onchange="applyAllFilters()">
+                <option value="">All</option>
+            </select>
+
+            <label>Year:</label>
+            <select id="yearFilter" onchange="applyAllFilters()">
+                <option value="">All</option>
+            </select>
+
+            <button onclick="toggleUpgraded()">Hide/Show Upgraded</button>
+        </div>
+
+        <h4>Summary of Upgraded Ayush Educational Institutions</h4>
+        <div id="SummaryofupgaeiInstitutions"></div>
+
+        <h4>Summary of Newly Approved Ayush Educational Institutions</h4>
+        <div id="newlyApprovedAEIReport"></div>
+    </div>
+	
+
+	<div id="flexiSection" style="display:none;">
+
+		<h3>Status of Flexi Pool</h3>
+
+		<!-- FILTER -->
+		<div style="margin-bottom:10px;">
+
+			<label>State:</label>
+
+			<select id="flexiStateFilter">
+				<option value="">All</option>
+			</select>
+
+			<label>Year:</label>
+
+			<select id="flexiYearFilter">
+				<option value="">All</option>
+			</select>
+
+			<button onclick="applyFlexiFilters()">
+				Apply
+			</button>
+
+		</div>
+
+
+		<!-- BUTTONS -->
+		<div style="margin-bottom:10px;">
+
+			<button onclick="showYoga()">
+				Yoga
+			</button>
+
+			<button onclick="showNaturopathy()">
+				Naturopathy
+			</button>
+
+			<button onclick="showTelemedicine()">
+				Telemedicines
+			</button>
+
+			<button onclick="showSportMedicine()">
+				Sport Medicine
+			</button>
+
+		</div>
+
+
+		<!-- YOGA -->
+		<div id="yogaSection">
+
+			<h3>Yoga</h3>
+
+			<div id="yogaTable"></div>
+
+		</div>
+
+
+		<!-- NATUROPATHY -->
+		<div id="naturopathySection" style="display:none;">
+
+			<h3>Naturopathy</h3>
+
+			<div id="naturopathyTable"></div>
+
+		</div>
+
+
+		<!-- TELEMEDICINE -->
+		<div id="telemedicineSection" style="display:none;">
+
+			<h3>Telemedicines</h3>
+
+			<div id="telemedicineTable"></div>
+
+		</div>
+
+
+		<!-- SPORT -->
+		<div id="sportMedicineSection" style="display:none;">
+
+			<h3>Sport Medicine</h3>
+
+			<div id="sportMedicineTable"></div>
+
+		</div>
+
+	</div>
+    <!-- ✅ OTHER SECTIONS -->
+    <div id="monthlySection" style="display:none;"></div>
+    <div id="statesSection" style="display:none;"></div>
+    <div id="summarySection" style="display:none;"></div>
+	
+
+
+
+		<!-- =========================
+		 MANPOWER SECTION
+	========================= -->
+
+	<div id="manpowerSection" style="display:none;">
+
+		<h3>Status of Manpower</h3>
+
+		<!-- FILTERS -->
+		<div style="margin-bottom:10px;">
+
+			<label>State:</label>
+
+			<select id="manpowerStateFilter">
+				<option value="">All</option>
+			</select>
+
+			<button onclick="applyManpowerFilter()">
+				Apply
+			</button>
+
+		</div>
+
+
+		<!-- =========================
+			 MAIN BUTTONS
+		========================= -->
+
+		<div style="margin-bottom:10px;">
+
+			<button onclick="toggleManpowerSection('spmuDpmuBlock')">
+				SPMU / DPMU
+			</button>
+
+			<button onclick="toggleManpowerSection('aamBlock')">
+				Ayushman Arogya Mandir
+			</button>
+
+			<button onclick="toggleManpowerSection('manpowerIntegratedBlock')">
+				Integrated Ayush Hospitals
+			</button>
+
+			<button onclick="toggleManpowerSection('hospitalUpgradeBlock')">
+				Upgradation of Ayush Hospitals
+			</button>
+
+			<button onclick="toggleManpowerSection('dispensaryUpgradeBlock')">
+				Upgradation of Ayush Dispensaries
+			</button>
+
+			<button onclick="toggleManpowerSection('yogaBlock')">
+				Yoga & Wellness Centres
+			</button>
+
+			<button onclick="toggleManpowerSection('programmeBlockMP')">
+				Ayush Public Health Programmes
+			</button>
+
+		</div>
+
+
+		<!-- =========================
+			 SPMU DPMU
+		========================= -->
+
+		<div id="spmuDpmuBlock">
+
+			<h3>SPMU / DPMU</h3>
+
+			<div id="spmuDpmu"></div>
+
+		</div>
+
+
+		<!-- =========================
+			 AAM
+		========================= -->
+
+		<div id="aamBlock" style="display:none;">
+
+			<h3>Ayushman Arogya Mandir (Ayush)</h3>
+
+			<button onclick="toggleManpowerSection('aamDispensaryBlock')">
+				Upgradation of Ayush Dispensaries
+			</button>
+
+			<button onclick="toggleManpowerSection('aamSubCentreBlock')">
+				Upgradation of Sub Centres
+			</button>
+
+
+			<div id="aamDispensaryBlock">
+
+				<h4>
+					Upgradation of Ayush Dispensaries
+				</h4>
+
+				<div id="aamDispensary"></div>
+
+			</div>
+
+
+			<div id="aamSubCentreBlock"
+			style="display:none;">
+
+				<h4>
+					Upgradation of Sub Centres
+				</h4>
+
+				<div id="aamSubCentre"></div>
+
+			</div>
+
+		</div>
+
+
+		<!-- =========================
+			 INTEGRATED HOSPITALS
+		========================= -->
+
+		<div id="manpowerIntegratedBlock"
+		style="display:none;">
+
+			<h3>Integrated Ayush Hospitals</h3>
+
+			<button onclick="toggleManpowerSection('block50')">
+				50 Bedded
+			</button>
+
+			<button onclick="toggleManpowerSection('block30')">
+				30 Bedded
+			</button>
+
+			<button onclick="toggleManpowerSection('block10')">
+				10 Bedded
+			</button>
+
+
+			<div id="block50">
+
+				<h4>
+					Manpower at 50 Bedded
+					Integrated Ayush Hospitals
+				</h4>
+
+				<div id="manpower50"></div>
+
+			</div>
+
+
+			<div id="block30"
+			style="display:none;">
+
+				<h4>
+					Manpower at 30 Bedded
+					Integrated Ayush Hospitals
+				</h4>
+
+				<div id="manpower30"></div>
+
+			</div>
+
+
+			<div id="block10"
+			style="display:none;">
+
+				<h4>
+					Manpower at 10 Bedded
+					Integrated Ayush Hospitals
+				</h4>
+
+				<div id="manpower10"></div>
+
+			</div>
+
+		</div>
+
+
+		<!-- =========================
+			 HOSPITAL UPGRADE
+		========================= -->
+
+		<div id="hospitalUpgradeBlock"
+		style="display:none;">
+
+			<h3>
+				Upgradation of Ayush Hospitals
+			</h3>
+
+			<div id="manpowerHospital"></div>
+
+		</div>
+
+
+		<!-- =========================
+			 DISPENSARY UPGRADE
+		========================= -->
+
+		<div id="dispensaryUpgradeBlock"
+		style="display:none;">
+
+			<h3>
+				Upgradation of Ayush Dispensaries
+			</h3>
+
+			<div id="manpowerDispensary"></div>
+
+		</div>
+
+
+		<!-- =========================
+			 YOGA
+		========================= -->
+
+		<div id="yogaBlock"
+		style="display:none;">
+
+			<h3>
+				Yoga & Wellness Centres
+			</h3>
+
+			<div id="manpowerYoga"></div>
+
+		</div>
+
+
+		<!-- =========================
+			 PROGRAMMES
+		========================= -->
+
+		<div id="programmeBlockMP"
+		style="display:none;">
+
+			<h3>
+				Ayush Public Health Programmes
+			</h3>
+
+			<button onclick="toggleManpowerSection('osteoBlock')">
+				Osteoarthritis
+			</button>
+
+			<button onclick="toggleManpowerSection('npcdcsBlock')">
+				NPCDCS
+			</button>
+
+			<button onclick="toggleManpowerSection('suprajaBlock')">
+				SUPRAJA
+			</button>
+
+			<button onclick="toggleManpowerSection('vayoBlock')">
+				VAYO MITRA
+			</button>
+
+			<button onclick="toggleManpowerSection('ayurvidyaBlock')">
+				AYURVIDYA
+			</button>
+
+			<button onclick="toggleManpowerSection('mmuBlock')">
+				Mobile Medical Unit
+			</button>
+
+			<button onclick="toggleManpowerSection('karunyaBlock')">
+				KARUNYA
+			</button>
+
+			<button onclick="toggleManpowerSection('morbidityBlock')">
+				Morbidity Management
+			</button>
+
+
+			<div id="osteoBlock">
+
+				<h4>
+					Osteoarthritis &
+					Musculoskeletal Disorders
+				</h4>
+
+				<div id="mpOsteo"></div>
+
+			</div>
+
+
+			<div id="npcdcsBlock"
+			style="display:none;">
+
+				<h4>
+					NPCDCS Integration
+				</h4>
+
+				<div id="mpNpcdcs"></div>
+
+			</div>
+
+
+			<div id="suprajaBlock"
+			style="display:none;">
+
+				<h4>
+					SUPRAJA
+				</h4>
+
+				<div id="mpSupraja"></div>
+
+			</div>
+
+
+			<div id="vayoBlock"
+			style="display:none;">
+
+				<h4>
+					VAYO MITRA
+				</h4>
+
+				<div id="mpVayo"></div>
+
+			</div>
+
+
+			<div id="ayurvidyaBlock"
+			style="display:none;">
+
+				<h4>
+					AYURVIDYA
+				</h4>
+
+				<div id="mpAyurvidya"></div>
+
+			</div>
+
+
+			<div id="mmuBlock"
+			style="display:none;">
+
+				<h4>
+					AYUSH Mobile Medical Unit
+				</h4>
+
+				<div id="mpMMU"></div>
+
+			</div>
+
+
+			<div id="karunyaBlock"
+			style="display:none;">
+
+				<h4>
+					KARUNYA
+				</h4>
+
+				<div id="mpKarunya"></div>
+
+			</div>
+
+
+			<div id="morbidityBlock"
+			style="display:none;">
+
+				<h4>
+					AYUSH Morbidity Management
+				</h4>
+
+				<div id="mpMorbidity"></div>
+
+			</div>
+
+		</div> 
+
+
+	</div>
+
+
+		<!-- =========================
+			 MEDICINES SECTION
+		========================= -->
+
+		<div id="medicineSection" style="display:none;">
+
+			<h3>Status of Ayush Medicines</h3>
+
+			<div id="medicineTable"></div>
+
+		</div>
+
+
+		<!-- =========================
+			 EXPENDITURE SECTION
+		========================= -->
+
+		<div id="expenditureSection" style="display:none;">
+
+			<h3>Status of Expenditure</h3>
+
+			<div style="margin-bottom:10px;">
+
+				<label>State:</label>
+
+				<select id="expStateFilter">
+					<option value="">All</option>
+				</select>
+
+				<label>Year:</label>
+
+				<select id="expYearFilter">
+					<option value="">All</option>
+				</select>
+
+				<button onclick="applyExpenditureFilter()">
+					Apply
+				</button>
+
+			</div>
+
+			<div id="expenditureTable"></div>
+
+		</div>
+
+
+		<!-- =========================
+			 AAM REPORT SECTION
+		========================= -->
+
+		<div id="aamContainer" style="display:none;">
+
+			{% include "aam_ayush.html" %}
+
+		</div>
+
+
+	</div> <!-- reportPanel CLOSE -->
+</div>
+
+
+<!-- Guidelines -->
+<div id="guidelinesPanel" class="panel">
+
+    <h2>Guidelines</h2>
+
+    <a href="https://drive.google.com/file/d/1wQvh2yLq0F4UbaIwEXaToNIsNf1fZdUs/view" target="_blank">
+        📄NAM Guidelines in Hindi
+    </a><br><br>
+
+    <a href="https://drive.google.com/file/d/1pbOckfHmzx73IspwhofHgq9W464XRgoM/view" target="_blank">
+        📄 NAM Guidelines in English
+    </a><br><br>
+
+    <a href="https://drive.google.com/file/d/1KtQNmzY8VoWf_CR8ti5ZT0QN5SHATQFO/view" target="_blank">
+        📄 AAM Ayush Guidelines
+    </a>
+
+</div>
+
+
+
+<script>
+
+// 🔥 GLOBAL VARIABLES (yahin add karo)
+let phcData = [], chcData = [], dhData = [], ayushGramData = [];
+
+let phcHeaders = [], chcHeaders = [], dhHeaders = [], ayushGramHeaders = [];
+
+</script>
+
+<script>
+
+
+function showPanel(panel, btn) {
+
+    // sab panel hide
+    document.getElementById(
+        "formPanel"
+    ).style.display = "none";
+
+    document.getElementById(
+        "reportPanel"
+    ).style.display = "none";
+
+    document.getElementById(
+        "guidelinesPanel"
+    ).style.display = "none";
+
+
+    // 🔥 AAM HIDE + CLEAR
+    document.getElementById(
+        "aamContainer"
+    ).style.display = "none";
+
+    // selected panel show
+    let activePanel =
+    document.getElementById(
+        panel + "Panel"
+    );
+
+    if(activePanel){
+
+        activePanel.style.display =
+        "block";
+    }
+
+
+    // 🔥 only report tab
+    if(panel !== "report"){
+
+        document.getElementById(
+            "aamContainer"
+        ).style.display = "none";
+    }
+
+
+    // active button
+    document.querySelectorAll(
+        ".menu button"
+    ).forEach(b => {
+
+        b.classList.remove(
+            "active"
+        );
+    });
+
+    if(btn){
+
+        btn.classList.add(
+            "active"
+        );
+    }
+	
+}
+</script>
+
+<script>
+document.querySelectorAll(".menu button").forEach(btn => {
+    btn.addEventListener("click", function(e) {
+        e.preventDefault();  // 🔥 important
+    });
+});
+</script>
+
+
+<script>
+
+function showReportSection() {
+
+    let type =
+    document.getElementById(
+        "reportType"
+    ).value;
+
+    // HIDE ALL
+
+    document.getElementById(
+        "aeiSection"
+    ).style.display = "none";
+
+    document.getElementById(
+        "asSection"
+    ).style.display = "none";
+
+    document.getElementById(
+        "flexiSection"
+    ).style.display = "none";
+
+    document.getElementById(
+        "monthlySection"
+    ).style.display = "none";
+
+    document.getElementById(
+        "statesSection"
+    ).style.display = "none";
+
+    document.getElementById(
+        "summarySection"
+    ).style.display = "none";
+
+    document.getElementById(
+        "expenditureSection"
+    ).style.display = "none";
+
+    document.getElementById(
+        "manpowerSection"
+    ).style.display = "none";
+
+    document.getElementById(
+        "medicineSection"
+    ).style.display = "none";
+	document.getElementById(
+		"aamContainer"
+	).style.display = "none";
+
+
+
+    /* =====================
+       AEI
+    ===================== */
+
+    if (type === "aei") {
+
+        document.getElementById(
+            "aeiSection"
+        ).style.display = "block";
+
+        loadAEIData();
+    }
+
+
+
+    /* =====================
+       AYUSH SERVICES
+    ===================== */
+
+    else if (
+        type === "ayushservices"
+    ) {
+
+        document.getElementById(
+            "asSection"
+        ).style.display = "block";
+
+        loadAyushServicesData();
+    }
+
+
+
+    /* =====================
+       FLEXI POOL
+    ===================== */
+
+    else if (
+        type === "flexi"
+    ) {
+
+        document.getElementById(
+            "flexiSection"
+        ).style.display = "block";
+
+        loadFlexiData();
+    }
+
+
+
+    /* =====================
+       MONTHLY
+    ===================== */
+
+    else if (
+        type === "monthly"
+    ) {
+
+        document.getElementById(
+            "monthlySection"
+        ).style.display = "block";
+    }
+
+
+
+    /* =====================
+       STATES
+    ===================== */
+
+    else if (
+        type === "states"
+    ) {
+
+        document.getElementById(
+            "statesSection"
+        ).style.display = "block";
+    }
+
+
+
+    /* =====================
+       SUMMARY
+    ===================== */
+
+    else if (
+        type === "summary"
+    ) {
+
+        document.getElementById(
+            "summarySection"
+        ).style.display = "block";
+    }
+
+
+
+    /* =====================
+       EXPENDITURE
+    ===================== */
+
+    else if (
+        type === "expenditure"
+    ) {
+
+        document.getElementById(
+            "expenditureSection"
+        ).style.display = "block";
+
+        loadExpenditureData();
+    }
+
+
+
+    /* =====================
+       MANPOWER
+    ===================== */
+
+    else if (
+        type === "manpower"
+    ) {
+
+        document.getElementById(
+            "manpowerSection"
+        ).style.display = "block";
+
+        loadManpowerData();
+    }
+
+
+
+    /* =====================
+       MEDICINES
+    ===================== */
+
+    else if (
+        type === "medicines"
+    ) {
+
+        document.getElementById(
+            "medicineSection"
+        ).style.display = "block";
+    }
+	
+    else if (
+        type === "aam"
+    ) {
+
+        document.getElementById(
+            "aamContainer"
+        ).style.display = "block";
+
+        // 🔥 MAP FIX
+        setTimeout(() => {
+
+            if (typeof map !== "undefined" && map) {
+
+                map.invalidateSize();
+            }
+
+        }, 300);
+    }
+
+}
+</script>
+
+<script>
+window.addEventListener("DOMContentLoaded", () => {
+    let dropdown = document.getElementById("reportType");
+
+    if (dropdown && typeof showReportSection === "function") {
+        dropdown.value = "";
+        showReportSection();
+    }
+});
+</script>
+
+
+
+<script>
+function parseCSV(csv) {
+
+    return Papa.parse(csv, {
+        skipEmptyLines: true
+    }).data;
+}
+
+let upgradedData = [];
+let upgradedHeaders = [];
+let newAEIData = [];
+
+function loadAEIData() {
+
+    // 🔹 UP (Upgraded)
+    let url = "https://docs.google.com/spreadsheets/d/1FmXqroQN2IYzGbwEKj2V01oJAFjhilYzvpiXuLODqPU/gviz/tq?tqx=out:csv&sheet=AEI_UP";
+
+    fetch(url)
+    .then(res => res.text())
+    .then(csv => {
+
+        let rows = parseCSV(csv);
+
+        upgradedHeaders = rows[0];
+        upgradedData = rows.slice(1);
+
+
+		populateFilters(
+			[...upgradedData, ...newAEIData],
+			"stateFilter",
+			"yearFilter",
+			1,
+			4
+		);
+        renderUpgradedTable(upgradedData);
+    });
+
+
+    // 🔹 NEW (Newly Approved)
+    let newUrl = "https://docs.google.com/spreadsheets/d/1FmXqroQN2IYzGbwEKj2V01oJAFjhilYzvpiXuLODqPU/gviz/tq?tqx=out:csv&sheet=AEI_NEW";
+
+    fetch(newUrl)
+    .then(res => res.text())
+    .then(csv => {
+
+        let rows = parseCSV(csv);
+
+        let headers = rows[0];
+		newAEIHeaders = rows[0]; 
+        newAEIData = rows.slice(1);   // 🔥 SAVE DATA
+
+        renderNewAEITable(newAEIData, headers);  // 🔥 SHOW DATA
+    });
+}
+</script>
+
+
+
+<script>
+function populateFilters(
+    data,
+    stateId,
+    yearId,
+    stateIndex,
+    yearIndex
+) {
+
+    const stateDropdown =
+    document.getElementById(stateId);
+
+    const yearDropdown =
+    document.getElementById(yearId);
+
+    const states = [...new Set(
+        data.map(row => row[stateIndex])
+        .filter(Boolean)
+    )];
+
+    const years = [...new Set(
+        data.map(row => row[yearIndex])
+        .filter(Boolean)
+    )];
+
+    stateDropdown.innerHTML =
+    `<option value="">All</option>`;
+
+    yearDropdown.innerHTML =
+    `<option value="">All</option>`;
+
+    states.sort().forEach(state => {
+
+        stateDropdown.innerHTML +=
+        `<option value="${state}">${state}</option>`;
+    });
+
+    years.sort().forEach(year => {
+
+        yearDropdown.innerHTML +=
+        `<option value="${year}">${year}</option>`;
+    });
+}
+</script>
+
+<script>
+function applyAEIFilters() {
+
+    let state = document.getElementById("stateFilter").value;
+    let year = document.getElementById("yearFilter").value;
+
+    // 🔹 UP (Upgraded)
+    let filteredUP = upgradedData.filter(row => {
+
+        let stateMatch = !state || row[1] === state;
+        let yearMatch = !year || row[4] === year;
+
+        let amount = parseFloat(row[6]) || 0;
+        let exp = parseFloat(row[7]) || 0;
+
+        // ❌ zero rows हटाओ
+        return stateMatch && yearMatch && (amount > 0 || exp > 0);
+    });
+
+    renderUpgradedTable(filteredUP);
+
+
+    // 🔹 NEW (Newly Approved)
+    let filteredNEW = newAEIData.filter(row => {
+
+        let stateMatch = !state || row[1] === state;
+        let yearMatch = !year || row[4] === year;
+
+        let amount = parseFloat(row[6]) || 0;
+        let exp = parseFloat(row[7]) || 0;
+
+        return stateMatch && yearMatch && (amount > 0 || exp > 0);
+    });
+
+    renderNewAEITable(filteredNEW, newAEIHeaders);
+}
+</script>
+
+
+<script>
+function renderNewAEITable(data, headers) {
+
+    let html = "<table border='1' style='width:100%'>";
+
+    html += "<tr>";
+    headers.forEach(h => html += `<th>${h}</th>`);
+    html += "</tr>";
+
+    data.forEach(row => {
+        html += "<tr>";
+        row.forEach(cell => html += `<td>${cell}</td>`);
+        html += "</tr>";
+    });
+
+    html += "</table>";
+
+    document.getElementById("newlyApprovedAEIReport").innerHTML = html;
+}
+</script>
+
+<script>
+function renderUpgradedTable(data) {
+
+    let html = "<table border='1' style='width:100%; border-collapse:collapse'>";
+
+    // 🔥 Custom Header (fixed format)
+    html += `
+    <tr>
+        <th>Sl. No.</th>
+        <th>Name of State/ UT</th>
+        <th>Name of the Institutions</th>
+        <th>UG/PG</th>
+        <th>Year</th>
+        <th>Amount approved</th>
+        <th>Expenditure at CS</th>
+    </tr>`;
+
+    let totalAmount = 0;
+    let totalCentral = 0;
+
+    data.forEach((row, index) => {
+
+        html += "<tr>";
+
+        html += `<td>${index + 1}</td>`;   // S.No auto
+        html += `<td>${row[1]}</td>`;      // State
+        html += `<td>${row[2]}</td>`;      // Institution
+        html += `<td>${row[3]}</td>`;      // UG/PG
+        html += `<td>${row[4]}</td>`;      // Year
+        html += `<td>${row[6]}</td>`;      // Amount
+        html += `<td>${row[7]}</td>`;      // Expenditure
+
+        totalAmount += parseFloat(row[6]) || 0;
+        totalCentral += parseFloat(row[7]) || 0;
+
+        html += "</tr>";
+    });
+
+    // 🔥 TOTAL ROW
+    html += `
+    <tr style="background:#e6f2ff; font-weight:bold;">
+        <td colspan="5">TOTAL</td>
+        <td>${totalAmount.toFixed(2)}</td>
+        <td>${totalCentral.toFixed(2)}</td>
+    </tr>`;
+
+    html += "</table>";
+
+    document.getElementById("SummaryofupgaeiInstitutions").innerHTML = html;
+}
+</script>
+
+<script>
+function applyNewAEIFilters() {
+
+    let state = document.getElementById("stateFilter").value;
+    let year = document.getElementById("yearFilter").value;
+
+    let filtered = newAEIData.filter(row => {
+
+        let stateMatch = !state || row[1] === state;
+        let yearMatch = !year || row[3] === year;
+
+        let amount = parseFloat(row[6]) || 0;
+
+        return stateMatch && yearMatch && amount !== 0;
+    });
+
+    renderNewAEITable(filtered, newAEIHeaders);
+}
+</script>
+
+
+<script>
+function applyAllFilters() {
+
+    let state = document.getElementById("stateFilter").value;
+    let year = document.getElementById("yearFilter").value;
+
+    // 🔹 UP
+    let filteredUP = upgradedData.filter(row => {
+        let stateMatch = !state || row[1] === state;
+        let yearMatch = !year || row[4] === year;
+
+        let amount = Number(row[6]) || 0;
+        let exp = Number(row[7]) || 0;
+
+        return stateMatch && yearMatch && (amount > 0 || exp > 0);
+    });
+
+    renderUpgradedTable(filteredUP);
+
+    // 🔹 NEW
+    let filteredNEW = newAEIData.filter(row => {
+        let stateMatch = !state || row[1] === state;
+        let yearMatch = !year || row[4] === year;
+
+        let amount = Number(row[6]) || 0;
+        let exp = Number(row[8]) || 0;
+
+        return stateMatch && yearMatch && (amount > 0 || exp > 0);
+    });
+
+    renderNewAEITable(filteredNEW, newAEIHeaders);
+}
+</script>
+
+<script>
+
+function toggleUpgraded() {
+    let div = document.getElementById("SummaryofupgaeiInstitutions");
+
+    let currentDisplay = window.getComputedStyle(div).display;
+
+    if (currentDisplay === "none") {
+        div.style.display = "block";
+    } else {
+        div.style.display = "none";
+    }
+}
+
+</script>
+
+<script>
+function loadAyushServicesData() {
+
+    const sheets = [
+        {
+            name: "PHCs",
+            div: "Summaryofphcs",
+            dataVar: "phcData",
+            headerVar: "phcHeaders"
+        },
+        {
+            name: "CHCs",
+            div: "Summaryofchcs",
+            dataVar: "chcData",
+            headerVar: "chcHeaders"
+        },
+        {
+            name: "DHs",
+            div: "SummaryofDHs",
+            dataVar: "dhData",
+            headerVar: "dhHeaders"
+        },
+        {
+            name: "Ayush Gram",
+            div: "ayushGramData",
+            dataVar: "ayushGramData",
+            headerVar: "ayushGramHeaders"
+        }
+    ];
+
+    let loadedCount = 0;
+
+    sheets.forEach(sheet => {
+
+		loadSheetData(sheet.name, (headers, data) => {
+
+			if (sheet.name === "PHCs") {
+				phcData = data;
+				phcHeaders = headers;
+			}
+
+			if (sheet.name === "CHCs") {
+				chcData = data;
+				chcHeaders = headers;
+			}
+
+			if (sheet.name === "DHs") {
+				dhData = data;
+				dhHeaders = headers;
+			}
+
+			if (sheet.name === "Ayush Gram") {
+				ayushGramData = data;
+				ayushGramHeaders = headers;
+			}
+
+			renderGenericTable(
+				data,
+				headers,
+				sheet.div
+			);
+
+			loadedCount++;
+
+			if (loadedCount === sheets.length) {
+
+				populateColocationFilters(
+					[
+						...phcData,
+						...chcData,
+						...dhData
+					],
+					phcHeaders
+				);
+			}
+		});
+    });
+}
+</script>
+
+
+<script>
+function renderGenericTable(
+    data,
+    headers,
+    targetDivId
+) {
+
+    if (!data || data.length === 0) {
+
+        document.getElementById(
+            targetDivId
+        ).innerHTML =
+        "No Data Available";
+
+        return;
+    }
+
+    // remove empty headers
+    let validIndexes = [];
+
+    headers.forEach((h, i) => {
+
+        if (
+            h &&
+            h.toString().trim() !== ""
+        ) {
+            validIndexes.push(i);
+        }
+    });
+
+    let html = `
+    <div style="
+        width:100%;
+        overflow-x:auto;
+    ">
+
+    <table border="1"
+    style="
+        width:100%;
+        border-collapse:collapse;
+    ">
+    `;
+
+    /* HEADER */
+
+    html += `
+    <tr style="
+        background:#2c3e50;
+        color:white;
+    ">
+    `;
+
+    validIndexes.forEach(i => {
+
+        html += `
+        <th style="padding:6px;">
+            ${headers[i]}
+        </th>
+        `;
+    });
+
+    html += `</tr>`;
+
+
+    /* DATA */
+
+    data.forEach(row => {
+
+        html += `<tr>`;
+
+        validIndexes.forEach(i => {
+
+            html += `
+            <td style="
+                padding:6px;
+                text-align:center;
+            ">
+                ${row[i] || ""}
+            </td>
+            `;
+        });
+
+        html += `</tr>`;
+    });
+
+    html += `
+    </table>
+    </div>
+    `;
+
+    document.getElementById(
+        targetDivId
+    ).innerHTML = html;
+}
+</script>
+
+
+<script>
+function loadSheetData(sheetName, callback) {
+
+	const url =`https://docs.google.com/spreadsheets/d/1FmXqroQN2IYzGbwEKj2V01oJAFjhilYzvpiXuLODqPU/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}`;
+
+    Papa.parse(url, {
+
+        download: true,
+
+        header: false,
+
+        skipEmptyLines: true,
+
+        complete: function(results) {
+
+            const rows = results.data;
+
+            if (!rows || rows.length === 0) return;
+
+            const headers = rows[0];
+            const data = rows.slice(1);
+
+            callback(headers, data);
+        },
+
+        error: function(err) {
+            console.log(err);
+        }
+    });
+}
+</script>
+
+
+
+<script>
+let expenditureData = [];
+let expenditureHeaders = [];
+
+function loadExpenditureData() {
+
+    loadSheetData(
+        "Expentiture_Status",
+
+        (headers, data) => {
+
+            expenditureHeaders = headers;
+            expenditureData = data;
+
+            // table render
+            renderExpenditureTable(data);
+
+            // populate filters
+			populateFilters(
+				data,
+				"expStateFilter",
+				"expYearFilter",
+				1,
+				2
+			);
+        }
+    );
+}
+
+</script>
+
+<script>
+
+function toggleSection(id) {
+    let el = document.getElementById(id);
+    let display = window.getComputedStyle(el).display;
+
+    el.style.display = (display === "none") ? "block" : "none";
+}
+
+</script>
+
+
+<script>
+
+function populateColocationFilters(data, headers) {
+
+    let stateSet = new Set();
+    let yearSet = new Set();
+
+    // FIXED INDEX
+    let stateIndex = 1;
+    let yearIndex = 2;
+
+    data.forEach(row => {
+
+        let state = row[stateIndex];
+        let year = row[yearIndex];
+
+        if (state && state.trim() !== "") {
+            stateSet.add(state.trim());
+        }
+
+        if (year && year.trim() !== "") {
+            yearSet.add(year.trim());
+        }
+    });
+
+    let stateDropdown =
+    document.getElementById(
+        "colocationStateFilter"
+    );
+
+    let yearDropdown =
+    document.getElementById(
+        "colocationYearFilter"
+    );
+
+    stateDropdown.innerHTML =
+    `<option value="">All</option>`;
+
+    yearDropdown.innerHTML =
+    `<option value="">All</option>`;
+
+    [...stateSet]
+    .sort()
+    .forEach(state => {
+
+        stateDropdown.innerHTML +=
+        `<option value="${state}">
+            ${state}
+        </option>`;
+    });
+
+    [...yearSet]
+    .sort()
+    .forEach(year => {
+
+        yearDropdown.innerHTML +=
+        `<option value="${year}">
+            ${year}
+        </option>`;
+    });
+}
+
+
+function applyColocationFilter() {
+
+    let state =
+    document.getElementById(
+        "colocationStateFilter"
+    ).value;
+
+    let year =
+    document.getElementById(
+        "colocationYearFilter"
+    ).value;
+
+    function filterData(data) {
+
+        return data.filter(row => {
+
+            let stateMatch =
+
+                !state ||
+
+                String(row[1]).trim()
+                ===
+                String(state).trim();
+
+            let yearMatch =
+
+                !year ||
+
+                String(row[2]).trim()
+                ===
+                String(year).trim();
+
+            return stateMatch &&
+                   yearMatch;
+        });
+    }
+
+    renderGenericTable(
+        filterData(phcData),
+        phcHeaders,
+        "Summaryofphcs"
+    );
+
+    renderGenericTable(
+        filterData(chcData),
+        chcHeaders,
+        "Summaryofchcs"
+    );
+
+    renderGenericTable(
+        filterData(dhData),
+        dhHeaders,
+        "SummaryofDHs"
+    );
+}
+		
+function applyExpenditureFilter() {
+
+    const state =
+    document.getElementById("expStateFilter").value;
+
+    const year =
+    document.getElementById("expYearFilter").value;
+
+    const filtered = expenditureData.filter(row => {
+
+        const stateMatch =
+        !state || row[1]?.trim() === state;
+
+        const yearMatch =
+        !year || row[2]?.trim() === year;
+
+        return stateMatch && yearMatch;
+    });
+
+    renderGenericTable(
+        filtered,
+        expenditureHeaders,
+        "expenditureTable"
+    );
+}
+</script>
+
+<script>
+
+function renderExpenditureTable(data) {
+
+    let html = `
+    <div style="width:100%; overflow-x:auto;">
+
+    <table border="1"
+    style="
+        width:100%;
+        min-width:1400px;
+        border-collapse:collapse;
+        font-size:14px;
+        table-layout:auto;
+    ">
+
+    <tr style="background:#dfead7;">
+
+        <th>Sl. No.</th>
+        <th>Name of States/UTs</th>
+        <th>Year</th>
+        <th>Approved</th>
+        <th>Released</th>
+        <th>Central Share released</th>
+        <th>Matching State Share approved</th>
+        <th>Expenditure</th>
+        <th>Expenditure Central</th>
+        <th>Expenditure State</th>
+        <th>Refund Central</th>
+        <th>Refund State</th>
+        <th>Total Central Share</th>
+        <th>Total State share</th>
+        <th>Balance amount lying pending with Ayush Society</th>
+        <th>Unspent Central Share</th>
+        <th>Unspent State share</th>
+
+    </tr>
+    `;
+
+    data.forEach(row => {
+
+        html += "<tr>";
+
+        for (let i = 0; i <= 16; i++) {
+
+            html += `
+            <td style="
+                padding:6px;
+                text-align:center;
+                word-break:break-word;
+            ">
+                ${row[i] || ""}
+            </td>`;
+        }
+
+        html += "</tr>";
+    });
+
+    html += "</table></div>";
+
+    document.getElementById(
+        "expenditureTable"
+    ).innerHTML = html;
+}
+</script>
+
+<script>
+
+let manpowerData = {};
+let manpowerHeaders = {};
+
+const manpowerDivMap = {
+
+    "SPMU_DPMU Details": "spmuDpmu",
+
+    "MP_50_Bedded": "manpower50",
+    "MP_30_Bedded": "manpower30",
+    "MP_10_Bedded": "manpower10",
+
+    "MP_Upgrade_Hospital": "manpowerHospital",
+
+    "MP_Upgrade_Dispensary": "manpowerDispensary",
+
+    "MP_Yoga": "manpowerYoga",
+
+    "MP_AAM_Dispensary": "aamDispensary",
+
+    "MP_AAM_SubCentre": "aamSubCentre",
+
+    "MP_Osteoarthritis": "mpOsteo",
+    "MP_NPCDCS": "mpNpcdcs",
+    "MP_SUPRAJA": "mpSupraja",
+    "MP_VAYO": "mpVayo",
+    "MP_AYURVIDYA": "mpAyurvidya",
+    "MP_MMU": "mpMMU",
+    "MP_KARUNYA": "mpKarunya",
+    "MP_MORBIDITY": "mpMorbidity"
+};
+
+
+
+/* =========================
+   LOAD ALL MANPOWER DATA
+========================= */
+
+function loadManpowerData() {
+
+    Object.keys(manpowerDivMap).forEach(sheetName => {
+
+        loadManpowerSection(
+            sheetName,
+            manpowerDivMap[sheetName]
+        );
+    });
+}
+
+
+
+/* =========================
+   LOAD SINGLE SECTION
+========================= */
+
+function loadManpowerSection(
+    sheetName,
+    divId
+) {
+
+    loadSheetData(
+
+        sheetName,
+
+        (headers, data) => {
+
+            console.log(
+                "MANPOWER DATA:",
+                sheetName,
+                data
+            );
+
+            if (!data || data.length === 0) {
+                return;
+            }
+
+            manpowerHeaders[sheetName] =
+            headers;
+
+            manpowerData[sheetName] =
+            data;
+
+            renderManpowerTable(
+                data,
+                headers,
+                divId
+            );
+
+            populateManpowerFilters();
+        }
+    );
+}
+
+
+/* =========================
+   POPULATE FILTERS
+========================= */
+
+function populateManpowerFilters() {
+
+    let states = [];
+
+    Object.keys(manpowerData).forEach(sheet => {
+
+        let headers =
+        manpowerHeaders[sheet];
+
+        let rows =
+        manpowerData[sheet];
+
+        let stateIndex = headers.findIndex(h =>
+
+            h &&
+            h.toString()
+            .toLowerCase()
+            .includes("state")
+        );
+
+        if (stateIndex !== -1) {
+
+            rows.forEach(row => {
+
+                let state =
+                row[stateIndex];
+
+                if (state) {
+
+                    states.push(
+                        state.toString().trim()
+                    );
+                }
+            });
+        }
+    });
+
+    // unique states
+    states = [...new Set(states)];
+
+    // sort
+    states.sort();
+
+    let dropdown =
+    document.getElementById(
+        "manpowerStateFilter"
+    );
+
+    dropdown.innerHTML =
+    `<option value="">All</option>`;
+
+    states.forEach(state => {
+
+        let option =
+        document.createElement("option");
+
+        option.value = state;
+        option.textContent = state;
+
+        dropdown.appendChild(option);
+    });
+
+}
+
+
+
+/* =========================
+   APPLY FILTER
+========================= */
+
+function applyManpowerFilter() {
+
+    const state =
+
+    document.getElementById(
+        "manpowerStateFilter"
+    ).value;
+
+    Object.keys(manpowerData).forEach(sheet => {
+
+        let headers =
+        manpowerHeaders[sheet];
+
+        let rows =
+        manpowerData[sheet];
+
+        // find state column index
+        let stateIndex = headers.findIndex(h =>
+
+            h &&
+            h.toString()
+            .toLowerCase()
+            .includes("state")
+        );
+
+        let filtered = rows;
+
+        // apply state filter
+        if (state && stateIndex !== -1) {
+
+            filtered = rows.filter(row => {
+
+                return (
+                    row[stateIndex]
+                    ?.toString()
+                    .trim() === state
+                );
+            });
+        }
+
+        renderManpowerTable(
+
+            filtered,
+
+            headers,
+
+            manpowerDivMap[sheet]
+        );
+    });
+}
+
+
+
+/* =========================
+   RENDER TABLE
+========================= */
+
+function renderManpowerTable(
+    data,
+    headers,
+    targetDiv
+) {
+
+    let target =
+    document.getElementById(
+        targetDiv
+    );
+
+    if (!target) {
+
+        console.log(
+            "DIV NOT FOUND:",
+            targetDiv
+        );
+
+        return;
+    }
+
+    let html = `
+
+    <div style="
+        width:100%;
+        overflow-x:auto;
+        margin-top:10px;
+    ">
+
+    <table border="1"
+    style="
+        width:100%;
+        border-collapse:collapse;
+        font-size:14px;
+    ">
+    `;
+
+
+    /* HEADER */
+
+    html += `
+    <tr style="
+        background:#2c3e50;
+        color:white;
+    ">
+    `;
+
+    headers.forEach(h => {
+
+        html += `
+        <th style="
+            padding:8px;
+        ">
+            ${h || ""}
+        </th>
+        `;
+    });
+
+    html += `</tr>`;
+
+
+    /* ROWS */
+
+    data.forEach(row => {
+
+        html += `<tr>`;
+
+        headers.forEach((_, i) => {
+
+            html += `
+            <td style="
+                padding:6px;
+                text-align:center;
+            ">
+                ${row[i] || ""}
+            </td>
+            `;
+        });
+
+        html += `</tr>`;
+    });
+
+    html += `
+    </table>
+    </div>
+    `;
+
+    target.innerHTML = html;
+}
+
+
+
+/* =========================
+   TOGGLE SECTION
+========================= */
+
+function toggleManpowerSection(id) {
+
+    let el =
+    document.getElementById(id);
+
+    if (!el) return;
+
+    let display =
+    window.getComputedStyle(el)
+    .display;
+
+    el.style.display =
+
+    (display === "none")
+
+    ? "block"
+
+    : "none";
+}
+
+</script>
+
+<Script>
+function populateAyushGramFilters() {
+
+    let stateDropdown =
+    document.getElementById(
+        "colocationStateFilter"
+    );
+
+    let yearDropdown =
+    document.getElementById(
+        "colocationYearFilter"
+    );
+
+    stateDropdown.innerHTML =
+    `<option value="">All</option>`;
+
+    yearDropdown.innerHTML =
+    `<option value="">All</option>`;
+
+    /* STATES */
+
+    let states = [
+
+        ...new Set(
+
+            ayushGramData.map(
+                row => row[1]
+            )
+        )
+    ];
+
+    states
+    .filter(Boolean)
+    .sort()
+    .forEach(state => {
+
+        stateDropdown.innerHTML +=
+        `<option value="${state}">
+            ${state}
+        </option>`;
+    });
+
+    /* YEARS */
+
+    let years = [
+
+        ...new Set(
+
+            ayushGramData.map(
+                row => row[2]
+            )
+        )
+    ];
+
+    years
+    .filter(Boolean)
+    .sort()
+    .forEach(year => {
+
+        yearDropdown.innerHTML +=
+        `<option value="${year}">
+            ${year}
+        </option>`;
+    });
+}
+
+function applyAyushGramFilter() {
+
+    let state =
+    document.getElementById(
+        "colocationStateFilter"
+    ).value;
+
+    let year =
+    document.getElementById(
+        "colocationYearFilter"
+    ).value;
+
+    let filtered =
+	ayushGramData.filter(row => {
+
+		let stateMatch =
+
+			!state ||
+
+			String(row[1])
+			.trim()
+
+			===
+
+			String(state)
+			.trim();
+
+
+
+		let yearMatch =
+
+			!year ||
+
+			String(row[2])
+			.trim()
+
+			===
+
+			String(year)
+			.trim();
+
+		return stateMatch &&
+			   yearMatch;
+	});
+
+    renderGenericTable(
+
+        filtered,
+
+        ayushGramHeaders,
+
+        "ayushGramData"
+    );
+}
+
+</script>
+
+
+<script>
+
+function hideAllASActivities() {
+
+    /* COLOCATION */
+    document.getElementById(
+        "colocationBlock"
+    ).style.display = "none";
+
+    /* DRUGS */
+    document.getElementById(
+        "drugsBlock"
+    ).style.display = "none";
+
+    /* HOSPITALS */
+    document.getElementById(
+        "hospitalBlock"
+    ).style.display = "none";
+
+    /* DISPENSARIES */
+    document.getElementById(
+        "dispensaryBlock"
+    ).style.display = "none";
+
+    /* INTEGRATED */
+    document.getElementById(
+        "integratedBlock"
+    ).style.display = "none";
+
+    /* PROGRAMMES */
+    document.getElementById(
+        "programmeBlock"
+    ).style.display = "none";
+
+    /* AYUSH GRAM */
+    document.getElementById(
+        "ayushgramBlock"
+    ).style.display = "none";
+}
+
+
+
+
+</script>
+
+<script>
+
+/* =========================
+   DEFAULT APPLY BUTTON
+========================= */
+
+document.getElementById(
+    "activityApplyBtn"
+).onclick = applyColocationFilter;
+
+
+
+/* =========================
+   SET APPLY BUTTON
+========================= */
+
+function setActivityApplyFilter(
+    filterFunction
+) {
+
+    document.getElementById(
+        "activityApplyBtn"
+    ).onclick = filterFunction;
+}
+
+
+
+/* =========================
+   COLOCATION
+========================= */
+
+function showColocation() {
+
+    hideAllASActivities();
+
+    document.getElementById(
+        "colocationBlock"
+    ).style.display = "block";
+
+    populateColocationFilters(
+        [
+            ...phcData,
+            ...chcData,
+            ...dhData
+        ],
+        phcHeaders
+    );
+
+    setActivityApplyFilter(
+        applyColocationFilter
+    );
+}
+
+
+
+/* =========================
+   DRUGS SUPPLY
+========================= */
+
+function showDrugsSupply() {
+
+    hideAllASActivities();
+
+    document.getElementById(
+        "drugsBlock"
+    ).style.display = "block";
+
+    setActivityApplyFilter(
+        applyDrugsFilter
+    );
+}
+
+
+
+/* =========================
+   HOSPITALS
+========================= */
+
+function showHospitals() {
+
+    hideAllASActivities();
+
+    document.getElementById(
+        "hospitalBlock"
+    ).style.display = "block";
+
+    setActivityApplyFilter(
+        applyHospitalFilter
+    );
+}
+
+
+
+/* =========================
+   DISPENSARIES
+========================= */
+
+function showDispensaries() {
+
+    hideAllASActivities();
+
+    document.getElementById(
+        "dispensaryBlock"
+    ).style.display = "block";
+
+    setActivityApplyFilter(
+        applyDispensaryFilter
+    );
+}
+
+
+
+/* =========================
+   INTEGRATED HOSPITALS
+========================= */
+
+function showIntegratedHospitals() {
+
+    hideAllASActivities();
+
+    document.getElementById(
+        "integratedBlock"
+    ).style.display = "block";
+
+    setActivityApplyFilter(
+        applyIntegratedHospitalFilter
+    );
+}
+
+
+
+/* =========================
+   PROGRAMMES
+========================= */
+
+function showProgrammes() {
+
+    hideAllASActivities();
+
+    document.getElementById(
+        "programmeBlock"
+    ).style.display = "block";
+
+    setActivityApplyFilter(
+        applyProgrammeFilter
+    );
+}
+
+
+
+/* =========================
+   AYUSH GRAM
+========================= */
+
+function showAyushGram() {
+
+    hideAllASActivities();
+
+    document.getElementById(
+        "ayushgramBlock"
+    ).style.display = "block";
+
+    populateAyushGramFilters();
+
+    setActivityApplyFilter(
+        applyAyushGramFilter
+    );
+}
+
+</script>
+
+<script>
+
+function applyFlexiFilters() {
+
+    applyYogaFilter();
+
+    applyNaturopathyFilter();
+
+    applySportMedicineFilter();
+
+    applyTelemedicineFilter();
+}
+
+/* =========================
+   COMMON STATE INDEX
+========================= */
+
+function getStateIndex(headers) {
+
+    return headers.findIndex(h =>
+
+        String(h)
+        .trim()
+        .toLowerCase()
+
+        .includes("state")
+    );
+}
+
+
+
+/* =========================
+   YOGA FILTER
+========================= */
+
+function applyYogaFilter() {
+
+    let state =
+    document.getElementById(
+        "flexiStateFilter"
+    ).value;
+
+    let year =
+    document.getElementById(
+        "flexiYearFilter"
+    ).value;
+
+    let stateIndex =
+    getStateIndex(yogaHeaders);
+
+    let filtered =
+    yogaData.filter(row => {
+
+        let stateMatch =
+
+            !state ||
+
+            String(row[stateIndex])
+            .trim()
+
+            ===
+
+            String(state)
+            .trim();
+
+
+
+        let yearMatch =
+
+            !year ||
+
+            String(row[2])
+            .trim()
+
+            ===
+
+            String(year)
+            .trim();
+
+        return stateMatch &&
+               yearMatch;
+    });
+
+    renderGenericTable(
+        filtered,
+        yogaHeaders,
+        "yogaTable"
+    );
+}
+
+
+
+/* =========================
+   NATUROPATHY FILTER
+========================= */
+
+function applyNaturopathyFilter() {
+
+    let state =
+    document.getElementById(
+        "flexiStateFilter"
+    ).value;
+
+    let year =
+    document.getElementById(
+        "flexiYearFilter"
+    ).value;
+
+    let stateIndex =
+    getStateIndex(
+        naturopathyHeaders
+    );
+
+    let filtered =
+    naturopathyData.filter(row => {
+
+        let stateMatch =
+
+            !state ||
+
+            String(
+                row[stateIndex]
+            )
+            .trim()
+
+            ===
+
+            String(state)
+            .trim();
+
+
+
+        let yearMatch =
+
+            !year ||
+
+            String(row[2])
+            .trim()
+
+            ===
+
+            String(year)
+            .trim();
+
+        return stateMatch &&
+               yearMatch;
+    });
+
+    renderGenericTable(
+
+        filtered,
+
+        naturopathyHeaders,
+
+        "naturopathyTable"
+    );
+}
+
+function applySportMedicineFilter() {
+
+    let state =
+    document.getElementById(
+        "flexiStateFilter"
+    ).value;
+
+    let year =
+    document.getElementById(
+        "flexiYearFilter"
+    ).value;
+
+    let stateIndex =
+    getStateIndex(
+        sportMedicineHeaders
+    );
+
+    let filtered =
+    sportMedicineData.filter(row => {
+
+        let stateMatch =
+
+            !state ||
+
+            String(row[stateIndex])
+            .trim()
+
+            ===
+
+            String(state)
+            .trim();
+
+        let yearMatch =
+
+            !year ||
+
+            String(row[2])
+            .trim()
+
+            ===
+
+            String(year)
+            .trim();
+
+        return stateMatch &&
+               yearMatch;
+    });
+
+    renderGenericTable(
+
+        filtered,
+
+        sportMedicineHeaders,
+
+        "sportMedicineTable"
+    );
+}
+
+function applyTelemedicineFilter() {
+
+    let state =
+    document.getElementById(
+        "flexiStateFilter"
+    ).value;
+
+    let year =
+    document.getElementById(
+        "flexiYearFilter"
+    ).value;
+
+    let stateIndex =
+    getStateIndex(
+        telemedicineHeaders
+    );
+
+    let filtered =
+    telemedicineData.filter(row => {
+
+        let stateMatch =
+
+            !state ||
+
+            String(row[stateIndex])
+            .trim()
+
+            ===
+
+            String(state)
+            .trim();
+
+        let yearMatch =
+
+            !year ||
+
+            String(row[2])
+            .trim()
+
+            ===
+
+            String(year)
+            .trim();
+
+        return stateMatch &&
+               yearMatch;
+    });
+
+    renderGenericTable(
+
+        filtered,
+
+        telemedicineHeaders,
+
+        "telemedicineTable"
+    );
+}
+
+
+
+
+let yogaData = [];
+let yogaHeaders = [];
+
+let naturopathyData = [];
+let naturopathyHeaders = [];
+
+let sportMedicineData = [];
+let sportMedicineHeaders = [];
+
+let telemedicineData = [];
+let telemedicineHeaders = [];
+
+
+
+/* =========================
+   LOAD FLEXI DATA
+========================= */
+
+function loadFlexiData() {
+
+    loadSheetData(
+        "Yoga",
+
+        (headers, data) => {
+
+            yogaHeaders = headers;
+            yogaData = data;
+
+            renderGenericTable(
+                data,
+                headers,
+                "yogaTable"
+            );
+
+            populateFlexiFilters();
+        }
+    );
+
+
+
+    loadSheetData(
+        "Naturopathy",
+
+        (headers, data) => {
+
+            naturopathyHeaders = headers;
+            naturopathyData = data;
+
+            renderGenericTable(
+                data,
+                headers,
+                "naturopathyTable"
+            );
+
+            populateFlexiFilters();
+        }
+    );
+
+
+
+    loadSheetData(
+        "Sport_Medicine",
+
+        (headers, data) => {
+
+            sportMedicineHeaders = headers;
+            sportMedicineData = data;
+
+            renderGenericTable(
+                data,
+                headers,
+                "sportMedicineTable"
+            );
+
+            populateFlexiFilters();
+        }
+    );
+
+
+
+    loadSheetData(
+        "Telemedicines",
+
+        (headers, data) => {
+
+            telemedicineHeaders = headers;
+            telemedicineData = data;
+
+            renderGenericTable(
+                data,
+                headers,
+                "telemedicineTable"
+            );
+
+            populateFlexiFilters();
+        }
+    );
+}
+
+
+
+/* =========================
+   POPULATE FLEXI FILTERS
+========================= */
+
+function populateFlexiFilters() {
+
+    let allSources = [
+
+        {
+            data: yogaData,
+            headers: yogaHeaders
+        },
+
+        {
+            data: naturopathyData,
+            headers: naturopathyHeaders
+        },
+
+        {
+            data: sportMedicineData,
+            headers: sportMedicineHeaders
+        },
+
+        {
+            data: telemedicineData,
+            headers: telemedicineHeaders
+        }
+    ];
+
+
+
+    let stateSet = new Set();
+    let yearSet = new Set();
+
+
+
+    allSources.forEach(source => {
+
+        let stateIndex =
+        getStateIndex(
+            source.headers
+        );
+
+        source.data.forEach(row => {
+
+            /* STATE */
+
+            let state =
+            row[stateIndex];
+
+            if (
+                state &&
+                String(state).trim() !== ""
+            ) {
+
+                stateSet.add(
+                    String(state).trim()
+                );
+            }
+
+
+
+            /* YEAR */
+
+            let year = row[2];
+
+            if (
+                year &&
+                String(year).trim() !== ""
+            ) {
+
+                yearSet.add(
+                    String(year).trim()
+                );
+            }
+        });
+    });
+
+
+
+    let stateDropdown =
+    document.getElementById(
+        "flexiStateFilter"
+    );
+
+    let yearDropdown =
+    document.getElementById(
+        "flexiYearFilter"
+    );
+
+
+
+    stateDropdown.innerHTML =
+    `<option value="">All</option>`;
+
+    yearDropdown.innerHTML =
+    `<option value="">All</option>`;
+
+
+
+    [...stateSet]
+    .sort()
+    .forEach(state => {
+
+        stateDropdown.innerHTML +=
+
+        `<option value="${state}">
+            ${state}
+        </option>`;
+    });
+
+
+
+    [...yearSet]
+    .sort()
+    .forEach(year => {
+
+        yearDropdown.innerHTML +=
+
+        `<option value="${year}">
+            ${year}
+        </option>`;
+    });
+}
+
+
+function hideAllFlexiReports() {
+
+    document.getElementById(
+        "yogaSection"
+    ).style.display = "none";
+
+    document.getElementById(
+        "naturopathySection"
+    ).style.display = "none";
+
+    document.getElementById(
+        "telemedicineSection"
+    ).style.display = "none";
+
+    document.getElementById(
+        "sportMedicineSection"
+    ).style.display = "none";
+}
+
+
+
+
+function showYoga() {
+
+    hideAllFlexiReports();
+
+    document.getElementById(
+        "yogaSection"
+    ).style.display = "block";
+}
+
+function showNaturopathy() {
+
+    hideAllFlexiReports();
+
+    document.getElementById(
+        "naturopathySection"
+    ).style.display = "block";
+}
+
+
+
+function showTelemedicine() {
+
+    hideAllFlexiReports();
+
+    document.getElementById(
+        "telemedicineSection"
+    ).style.display = "block";
+}
+
+
+function showSportMedicine() {
+
+    hideAllFlexiReports();
+
+    document.getElementById(
+        "sportMedicineSection"
+    ).style.display = "block";
+}
+
+
+</script>
+
+<script>
+function hideAllFlexiReports() {
+
+    document.getElementById(
+        "yogaSection"
+    ).style.display = "none";
+
+    document.getElementById(
+        "naturopathySection"
+    ).style.display = "none";
+
+    document.getElementById(
+        "telemedicineSection"
+    ).style.display = "none";
+
+    document.getElementById(
+        "sportMedicineSection"
+    ).style.display = "none";
+}
+
+
+function showYoga() {
+
+    hideAllFlexiReports();
+
+    document.getElementById(
+        "yogaSection"
+    ).style.display = "block";
+}
+
+
+function showNaturopathy() {
+
+    hideAllFlexiReports();
+
+    document.getElementById(
+        "naturopathySection"
+    ).style.display = "block";
+}
+
+
+function showTelemedicine() {
+
+    hideAllFlexiReports();
+
+    document.getElementById(
+        "telemedicineSection"
+    ).style.display = "block";
+}
+
+
+function showSportMedicine() {
+
+    hideAllFlexiReports();
+
+    document.getElementById(
+        "sportMedicineSection"
+    ).style.display = "block";
+}
+
+</script>

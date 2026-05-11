@@ -1,0 +1,52 @@
+<h1>National Ayush Mission Dashboard</h1>
+
+<h2 id="roleCheck"></h2>
+
+<!-- CENTRAL -->
+<div id="centralSection">
+    <h3>Central Dashboard</h3>
+    <p>Central ke options yahan aayenge</p>
+</div>
+
+<!-- STATE -->
+<div id="stateSection" style="display:none;">
+    <h3>State Dashboard</h3>
+    <p>State ke options yahan aayenge</p>
+</div><!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+</head>
+<body>
+
+
+<h2 id="roleCheck"></h2>
+
+<script>
+window.onload = function() {
+    const params = new URLSearchParams(window.location.search);
+    const role = params.get("role");
+
+    document.getElementById("roleCheck").innerText = "Login Type: " + role;
+}
+</script>
+
+<script>
+window.onload = function() {
+    const params = new URLSearchParams(window.location.search);
+    const role = params.get("role");
+
+    document.getElementById("roleCheck").innerText = "Login Type: " + role;
+
+    if (role === "central") {
+        document.getElementById("centralSection").style.display = "block";
+        document.getElementById("stateSection").style.display = "none";
+    } else {
+        document.getElementById("centralSection").style.display = "none";
+        document.getElementById("stateSection").style.display = "block";
+    }
+}
+</script>
+
+</body>
+</html>
