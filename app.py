@@ -142,12 +142,12 @@ SCOPES = ['https://www.googleapis.com/auth/drive.file']
 @app.route('/login')
 def login():
 
+
     flow = Flow.from_client_secrets_file(
         "client_secret.json",
         scopes=['https://www.googleapis.com/auth/drive.file'],
-        redirect_uri='http://127.0.0.1:5000/oauth2callback'
+        redirect_uri='https://website-three-nu-85.vercel.app/oauth2callback'
     )
-
     auth_url, state = flow.authorization_url(prompt='consent')
 
     # 🔥 SAVE EVERYTHING
@@ -163,7 +163,7 @@ def oauth2callback():
         "client_secret.json",
         scopes=['https://www.googleapis.com/auth/drive.file'],
         state=session['state'],
-        redirect_uri='http://127.0.0.1:5000/oauth2callback'
+        redirect_uri='https://website-three-nu-85.vercel.app/oauth2callback'
     )
 
     # 🔥 RESTORE verifier
