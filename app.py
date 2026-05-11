@@ -10,7 +10,6 @@ import pandas as pd
 from geopy.geocoders import Nominatim
 import PyPDF2
 import re
-import language_tool_python
 import os, pickle
 from reportlab.platypus import SimpleDocTemplate, Paragraph
 from reportlab.lib.styles import getSampleStyleSheet
@@ -18,8 +17,6 @@ from googleapiclient.http import MediaFileUpload
 from googleapiclient.http import MediaInMemoryUpload
 from google_auth_oauthlib.flow import Flow
 from google.oauth2.credentials import Credentials
-
-tool = language_tool_python.LanguageTool('en-US')
 from google_auth_oauthlib.flow import Flow
 from flask import redirect, session
 from googleapiclient.discovery import build
@@ -2023,9 +2020,7 @@ def overall_release():
 
 
 def grammar_fix_advanced(text):
-    matches = tool.check(text)
-    corrected = language_tool_python.utils.correct(text, matches)
-    return corrected
+    return text
 
 
 def clean_text(text):
