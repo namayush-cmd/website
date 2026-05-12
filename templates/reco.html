@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reconciliation Tool</title>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f5f7fb;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .container {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+        }
+
+        .box {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            width: 40%;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: 0.3s;
+        }
+
+        .box:hover {
+            transform: translateY(-5px);
+        }
+
+        .upload-area {
+            border: 2px dashed #bbb;
+            padding: 30px;
+            text-align: center;
+            border-radius: 10px;
+            cursor: pointer;
+            color: #777;
+        }
+
+        .upload-area:hover {
+            border-color: #4CAF50;
+            color: #4CAF50;
+        }
+
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: block;
+            margin: 20px auto;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background: #45a049;
+        }
+
+        #mappingSection {
+            margin-top: 30px;
+        }
+
+        #mappingArea {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        #result {
+            margin-top: 30px;
+        }
+
+        h3 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+<h2>📊 Excel Reconciliation Tool</h2>
+
+
+<div class="container">
+
+    <!-- LEFT BOX -->
+	<div class="box">
+		<h3>📁 1st Excel Sheet</h3>
+
+
+		<div class="upload-area" onclick="document.getElementById('file1').click()">
+			<span id="file1Text">Click to Upload File</span>
+			<input type="file" id="file1" hidden>
+		</div>
+
+		<!-- ✅ SHOW FILE NAME -->
+		<div id="file1Name" style="margin-top:10px; font-weight:bold;"></div>
+	</div>
+
+	<div class="box">
+		<h3>📁 2nd Excel Sheet</h3>
+
+	<div class="upload-area" onclick="document.getElementById('file2').click()">
+		<span id="file2Text">Click to Upload File</span>
+		<input type="file" id="file2" hidden>
+	</div>
+
+		<!-- ✅ SHOW FILE NAME -->
+		<div id="file2Name" style="margin-top:10px; font-weight:bold;"></div>
+	</div>
+
+</div>
+
+<button onclick="uploadFiles()">🚀 Upload & Continue</button>
+
+<hr>
+
+<div id="mappingSection" style="display:none;">
+    <h3 style="text-align:center;">🔗 Header Mapping</h3>
+
+    <div id="mappingArea"></div>
+
+    <button onclick="submitMapping()">✅ Submit for Reconciliation</button>
+</div>
+
+<hr>
+
+<div id="result"></div>
+
+<script src="/static/reco.js"></script>
+
+</body>
+</html>

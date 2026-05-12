@@ -1,0 +1,120 @@
+<!-- 🔥 HEADER -->
+<h3>Status of Utilization of Grants during the 15th and 16th Finance Commission Cycles</h3>
+
+<!-- 🔥 STATE FIELD -->
+<label>State/UT:</label>
+
+{% if role == 'state' %}
+
+    <!-- 🟢 STATE USER (LOCKED) -->
+    <select id="state" disabled>
+        <option value="">--Select State--</option>
+
+        <option value="Andhra Pradesh" {{ 'selected' if selected_state == 'Andhra Pradesh' else '' }}>Andhra Pradesh</option>
+        <option value="Arunachal Pradesh" {{ 'selected' if selected_state == 'Arunachal Pradesh' else '' }}>Arunachal Pradesh</option>
+        <option value="Assam" {{ 'selected' if selected_state == 'Assam' else '' }}>Assam</option>
+        <option value="Bihar" {{ 'selected' if selected_state == 'Bihar' else '' }}>Bihar</option>
+        <option value="Chhattisgarh" {{ 'selected' if selected_state == 'Chhattisgarh' else '' }}>Chhattisgarh</option>
+        <option value="Goa" {{ 'selected' if selected_state == 'Goa' else '' }}>Goa</option>
+        <option value="Gujarat" {{ 'selected' if selected_state == 'Gujarat' else '' }}>Gujarat</option>
+        <option value="Haryana" {{ 'selected' if selected_state == 'Haryana' else '' }}>Haryana</option>
+        <option value="Himachal Pradesh" {{ 'selected' if selected_state == 'Himachal Pradesh' else '' }}>Himachal Pradesh</option>
+        <option value="Jharkhand" {{ 'selected' if selected_state == 'Jharkhand' else '' }}>Jharkhand</option>
+        <option value="Karnataka" {{ 'selected' if selected_state == 'Karnataka' else '' }}>Karnataka</option>
+        <option value="Kerala" {{ 'selected' if selected_state == 'Kerala' else '' }}>Kerala</option>
+        <option value="Madhya Pradesh" {{ 'selected' if selected_state == 'Madhya Pradesh' else '' }}>Madhya Pradesh</option>
+        <option value="Maharashtra" {{ 'selected' if selected_state == 'Maharashtra' else '' }}>Maharashtra</option>
+        <option value="Manipur" {{ 'selected' if selected_state == 'Manipur' else '' }}>Manipur</option>
+        <option value="Meghalaya" {{ 'selected' if selected_state == 'Meghalaya' else '' }}>Meghalaya</option>
+        <option value="Mizoram" {{ 'selected' if selected_state == 'Mizoram' else '' }}>Mizoram</option>
+        <option value="Nagaland" {{ 'selected' if selected_state == 'Nagaland' else '' }}>Nagaland</option>
+        <option value="Odisha" {{ 'selected' if selected_state == 'Odisha' else '' }}>Odisha</option>
+        <option value="Punjab" {{ 'selected' if selected_state == 'Punjab' else '' }}>Punjab</option>
+        <option value="Rajasthan" {{ 'selected' if selected_state == 'Rajasthan' else '' }}>Rajasthan</option>
+        <option value="Sikkim" {{ 'selected' if selected_state == 'Sikkim' else '' }}>Sikkim</option>
+        <option value="Tamil Nadu" {{ 'selected' if selected_state == 'Tamil Nadu' else '' }}>Tamil Nadu</option>
+        <option value="Telangana" {{ 'selected' if selected_state == 'Telangana' else '' }}>Telangana</option>
+        <option value="Tripura" {{ 'selected' if selected_state == 'Tripura' else '' }}>Tripura</option>
+        <option value="Uttar Pradesh" {{ 'selected' if selected_state == 'Uttar Pradesh' else '' }}>Uttar Pradesh</option>
+        <option value="Uttarakhand" {{ 'selected' if selected_state == 'Uttarakhand' else '' }}>Uttarakhand</option>
+        <option value="West Bengal" {{ 'selected' if selected_state == 'West Bengal' else '' }}>West Bengal</option>
+        <option value="Andaman & Nicobar Islands" {{ 'selected' if selected_state == 'Andaman & Nicobar Islands' else '' }}>Andaman & Nicobar Islands</option>
+        <option value="Chandigarh" {{ 'selected' if selected_state == 'Chandigarh' else '' }}>Chandigarh</option>
+        <option value="Dadra & Nagar Haveli and Daman & Diu" {{ 'selected' if selected_state == 'Dadra & Nagar Haveli and Daman & Diu' else '' }}>Dadra & Nagar Haveli and Daman & Diu</option>
+        <option value="Delhi" {{ 'selected' if selected_state == 'Delhi' else '' }}>Delhi</option>
+        <option value="Jammu & Kashmir" {{ 'selected' if selected_state == 'Jammu & Kashmir' else '' }}>Jammu & Kashmir</option>
+        <option value="Ladakh" {{ 'selected' if selected_state == 'Ladakh' else '' }}>Ladakh</option>
+        <option value="Lakshadweep" {{ 'selected' if selected_state == 'Lakshadweep' else '' }}>Lakshadweep</option>
+        <option value="Puducherry" {{ 'selected' if selected_state == 'Puducherry' else '' }}>Puducherry</option>
+    </select>
+
+    <!-- hidden input for backend -->
+    <input type="hidden" name="state_hidden" id="state_hidden" value="{{ selected_state }}">
+	
+{% else %}
+
+    <!-- 🔵 CENTRAL USER (EDITABLE) -->
+    <select id="state">
+        <option value="">--Select State--</option>
+		<option value="Andhra Pradesh">Andhra Pradesh</option>
+		<option value="Arunachal Pradesh">Arunachal Pradesh</option>
+		<option value="Assam">Assam</option>
+		<option value="Bihar">Bihar</option>
+		<option value="Chhattisgarh">Chhattisgarh</option>
+		<option value="Goa">Goa</option>
+		<option value="Gujarat">Gujarat</option>
+		<option value="Haryana">Haryana</option>
+		<option value="Himachal Pradesh">Himachal Pradesh</option>
+		<option value="Jharkhand">Jharkhand</option>
+		<option value="Karnataka">Karnataka</option>
+		<option value="Kerala">Kerala</option>
+		<option value="Madhya Pradesh">Madhya Pradesh</option>
+		<option value="Maharashtra">Maharashtra</option>
+		<option value="Manipur">Manipur</option>
+		<option value="Meghalaya">Meghalaya</option>
+		<option value="Mizoram">Mizoram</option>
+		<option value="Nagaland">Nagaland</option>
+		<option value="Odisha">Odisha</option>
+		<option value="Punjab">Punjab</option>
+		<option value="Rajasthan">Rajasthan</option>
+		<option value="Sikkim">Sikkim</option>
+		<option value="Tamil Nadu">Tamil Nadu</option>
+		<option value="Telangana">Telangana</option>
+		<option value="Tripura">Tripura</option>
+		<option value="Uttar Pradesh">Uttar Pradesh</option>
+		<option value="Uttarakhand">Uttarakhand</option>
+		<option value="West Bengal">West Bengal</option>
+
+		<!-- 🔥 UNION TERRITORIES -->
+		<option value="Andaman & Nicobar Islands">Andaman & Nicobar Islands</option>
+		<option value="Chandigarh">Chandigarh</option>
+		<option value="Dadra & Nagar Haveli and Daman & Diu">Dadra & Nagar Haveli and Daman & Diu</option>
+		<option value="Delhi">Delhi</option>
+		<option value="Jammu & Kashmir">Jammu & Kashmir</option>
+		<option value="Ladakh">Ladakh</option>
+		<option value="Lakshadweep">Lakshadweep</option>
+		<option value="Puducherry">Puducherry</option>
+    </select>
+    <input type="hidden" name="state_hidden" id="state_hidden">
+{% endif %}
+
+<br><br>
+
+<!-- 🔥 YEAR -->
+<label>Year:</label>
+<select id="year" name="year" onchange="loadDraft()">
+    <option value="">--Select Year--</option>
+    <option value="2020-21">2020-21</option>
+    <option value="2021-22">2021-22</option>
+    <option value="2022-23">2022-23</option>
+    <option value="2023-24">2023-24</option>
+    <option value="2024-25">2024-25</option>
+    <option value="2025-26">2025-26</option>
+    <option value="2026-27">2026-27</option>
+</select>
+
+<br><br>
+
+<!-- 🔥 BUTTON -->
+
+<button type="button" id="retrieveBtn" onclick="loadDraft()" style="display:none;"></button>

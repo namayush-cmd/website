@@ -1,1 +1,241 @@
-<h1>test</h1>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>National Ayush Mission - Access</title>
+	
+
+    <style>
+        body {
+            font-family: Arial;
+            background: #f4f6f9;
+        }
+
+        .container {
+            width: 350px;
+            margin: 80px auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        input, select {
+            width: 95%;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            width: 95%;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+
+        .otp-box {
+            display: none;
+        }
+
+        .captcha {
+            font-weight: bold;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>National Ayush Mission</h2>
+
+<!-- 🔥 LOGIN TYPE -->
+<select id="loginType" onchange="toggleLogin()">
+    <option value="central">Central Login</option>
+    <option value="state">State Login</option>
+</select>
+
+<!-- ================= CENTRAL LOGIN (DEFAULT) ================= -->
+<div id="centralLogin">
+
+
+	<input type="password" id="centralPassword" placeholder="Enter Password">
+    <button onclick="handlecentralLogin()">Login as Central</button>
+
+</div>
+
+<!-- ================= STATE LOGIN ================= -->
+
+<div id="stateLogin" style="display:none;">
+
+    <input type="email" id="email" placeholder="Enter Email">
+
+    <input type="text" id="mobile" placeholder="Enter Mobile Number">
+	
+    <select id="state">
+        <option value="">-- Select State --</option>
+		<option value="Andhra Pradesh">Andhra Pradesh</option>
+		<option value="Arunachal Pradesh">Arunachal Pradesh</option>
+		<option value="Assam">Assam</option>
+		<option value="Bihar">Bihar</option>
+		<option value="Chhattisgarh">Chhattisgarh</option>
+		<option value="Goa">Goa</option>
+		<option value="Gujarat">Gujarat</option>
+		<option value="Haryana">Haryana</option>
+		<option value="Himachal Pradesh">Himachal Pradesh</option>
+		<option value="Jharkhand">Jharkhand</option>
+		<option value="Karnataka">Karnataka</option>
+		<option value="Kerala">Kerala</option>
+		<option value="Madhya Pradesh">Madhya Pradesh</option>
+		<option value="Maharashtra">Maharashtra</option>
+		<option value="Manipur">Manipur</option>
+		<option value="Meghalaya">Meghalaya</option>
+		<option value="Mizoram">Mizoram</option>
+		<option value="Nagaland">Nagaland</option>
+		<option value="Odisha">Odisha</option>
+		<option value="Punjab">Punjab</option>
+		<option value="Rajasthan">Rajasthan</option>
+		<option value="Sikkim">Sikkim</option>
+		<option value="Tamil Nadu">Tamil Nadu</option>
+		<option value="Telangana">Telangana</option>
+		<option value="Tripura">Tripura</option>
+		<option value="Uttar Pradesh">Uttar Pradesh</option>
+		<option value="Uttarakhand">Uttarakhand</option>
+		<option value="West Bengal">West Bengal</option>
+		<option value="Andaman & Nicobar Islands">Andaman & Nicobar Islands</option>
+		<option value="Chandigarh">Chandigarh</option>
+		<option value="Dadra & Nagar Haveli and Daman & Diu">Dadra & Nagar Haveli and Daman & Diu</option>
+		<option value="Delhi">Delhi</option>
+		<option value="Jammu & Kashmir">Jammu & Kashmir</option>
+		<option value="Ladakh">Ladakh</option>
+		<option value="Lakshadweep">Lakshadweep</option>
+		<option value="Puducherry">Puducherry</option>
+
+	</select>
+
+    <div id="captchaQ"></div>
+    <input type="text" id="captchaAns" placeholder="Enter CAPTCHA">
+
+    <button onclick="sendOTP()">Send OTP</button>
+
+    <div id="otpBox" style="display:none;">
+        <input type="text" id="otp" placeholder="Enter OTP">
+        <button onclick="verifyOTP()">Verify & Continue</button>
+    </div>
+
+</div>
+
+<script>
+let a = Math.floor(Math.random()*10);
+let b = Math.floor(Math.random()*10);
+
+// CAPTCHA
+function checkCaptcha() {
+    return parseInt(document.getElementById("captchaAns").value) === (a + b);
+}
+
+// SEND OTP
+function sendOTP() {
+    if (!checkCaptcha()) {
+        alert("Wrong CAPTCHA");
+        return;
+    }
+
+    let email = document.getElementById("email").value;
+    let mobile = document.getElementById("mobile").value;
+    let state = document.getElementById("state").value;
+
+    fetch("/send_otp", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: `email=${encodeURIComponent(email)}&mobile=${mobile}&state=${state}`
+    })
+    .then(res => res.json())
+    .then(() => {
+        alert("OTP sent");
+        document.getElementById("otpBox").style.display = "block";
+    })
+    .catch(err => {
+        console.error("ERROR:", err);
+        alert("Failed to send OTP");
+    });
+}
+
+// VERIFY OTP
+function verifyOTP() {
+    let otp = document.getElementById("otp").value;
+
+    fetch("/verify_otp", {
+        method: "POST",
+        headers: {"Content-Type": "application/x-www-form-urlencoded"},
+        body: `otp=${otp}`
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "verified") {
+            window.location.href = `/form?role=state&state=${data.state}`;
+        } else {
+            alert("Invalid OTP");
+        }
+    });
+}
+
+// TOGGLE LOGIN
+function toggleLogin() {
+    let type = document.getElementById("loginType").value;
+
+    if (type === "central") {
+        document.getElementById("centralLogin").style.display = "block";
+        document.getElementById("stateLogin").style.display = "none";
+    } else {
+        document.getElementById("centralLogin").style.display = "none";
+        document.getElementById("stateLogin").style.display = "block";
+    }
+}
+
+// CENTRAL LOGIN
+function handlecentralLogin() {
+    let pass = document.getElementById("centralPassword").value.trim();
+
+    if (pass === "Ayush@678#") {
+
+        // 🔥 FIRST logout properly
+        fetch("/logout")
+        .then(() => {
+
+            // 🔥 THEN set central session
+            return fetch("/set_central_session");
+        })
+        .then(() => {
+
+            alert("✅ Central Login Success");
+
+            window.location.href = "/form?role=central";
+        });
+
+    } else {
+        alert("❌ Wrong Password");
+    }
+}
+
+
+
+// PAGE LOAD
+window.onload = function() {
+    document.getElementById("captchaQ").innerText =
+        `Solve: ${a} + ${b}`;
+
+    toggleLogin();
+};
+</script>
+
+</body>
+</html>

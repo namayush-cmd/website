@@ -1,0 +1,38 @@
+import tkinter as tk
+from tkinter import messagebox
+
+# Function jab user option select kare
+def check_answer(choice):
+    if choice == "pani":
+        messagebox.showinfo("Result", "Sahi jawab! 💧 Pani se aag bujhti hai.")
+    else:
+        messagebox.showerror("Result", "Galat jawab! ❌ Aag aur bhadak gayi!")
+
+# Window create
+root = tk.Tk()
+root.title("🔥 Aag Lagi Hai!")
+root.geometry("400x400")
+root.configure(bg="black")
+
+# Fire effect text (simple animation)
+label = tk.Label(root, text="🔥 AAG LAG RAHI HAI 🔥", font=("Arial", 20, "bold"), fg="orange", bg="black")
+label.pack(pady=30)
+
+# Question
+question = tk.Label(root, text="Kaise bujhaoge?", font=("Arial", 14), fg="white", bg="black")
+question.pack(pady=10)
+
+# Buttons
+btn1 = tk.Button(root, text="Petrol", width=15, command=lambda: check_answer("petrol"))
+btn1.pack(pady=5)
+
+btn2 = tk.Button(root, text="Pani", width=15, command=lambda: check_answer("pani"))
+btn2.pack(pady=5)
+
+btn3 = tk.Button(root, text="Kapda", width=15, command=lambda: check_answer("kapda"))
+btn3.pack(pady=5)
+
+btn4 = tk.Button(root, text="Diesel", width=15, command=lambda: check_answer("diesel"))
+btn4.pack(pady=5)
+
+root.mainloop()

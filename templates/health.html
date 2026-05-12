@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Smart Patient System</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500&display=swap" rel="stylesheet">
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(120deg, #667eea, #764ba2);
+}
+
+.main {
+    display: flex;
+    height: 100vh;
+}
+
+/* LEFT IMAGE PANEL */
+.left {
+    width: 45%;
+    background: url('https://images.unsplash.com/photo-1588776814546-1ffcf47267a5') no-repeat center;
+    background-size: cover;
+    position: relative;
+}
+
+.left::after {
+    content: "Patient Care System";
+    position: absolute;
+    bottom: 30px;
+    left: 30px;
+    color: white;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+/* RIGHT FORM */
+.right {
+    width: 55%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.form-box {
+    width: 85%;
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(15px);
+    padding: 25px;
+    border-radius: 15px;
+    color: white;
+}
+
+h2 {
+    text-align: center;
+}
+
+/* INPUT STYLE */
+.input-group {
+    margin-bottom: 12px;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    margin-top: 5px;
+    outline: none;
+}
+
+input:focus, select:focus, textarea:focus {
+    box-shadow: 0 0 10px #00f2fe;
+}
+
+/* GRID */
+.row {
+    display: flex;
+    gap: 10px;
+}
+
+.row div {
+    flex: 1;
+}
+
+/* BUTTON */
+button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    background: #00f2fe;
+    color: black;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+button:hover {
+    background: #4facfe;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="main">
+
+    <!-- LEFT SIDE IMAGE -->
+    <div class="left"></div>
+
+    <!-- RIGHT SIDE FORM -->
+    <div class="right">
+        <div class="form-box">
+
+            <h2>🩺 Smart Patient Form</h2>
+
+            <form action="/submit" method="post">
+
+                <div class="row">
+                    <div class="input-group">
+                        <label>Name</label>
+                        <input type="text" name="name" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Age</label>
+                        <input type="number" name="age">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="input-group">
+                        <label>Gender</label>
+                        <select name="gender">
+                            <option>Male</option>
+                            <option>Female</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Blood</label>
+                        <select name="blood">
+                            <option>A+</option><option>B+</option>
+                            <option>O+</option><option>AB+</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Phone</label>
+                    <input type="tel" name="phone">
+                </div>
+
+                <div class="input-group">
+                    <label>Disease</label>
+                    <select name="disease">
+                        <option>None</option>
+                        <option>Diabetes</option>
+                        <option>Heart Disease</option>
+                        <option>Asthma</option>
+                        <option>Cancer</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>Allergy</label>
+                    <input type="text" name="allergy">
+                </div>
+
+                <div class="input-group">
+                    <label>Remarks</label>
+                    <textarea name="remarks"></textarea>
+                </div>
+
+                <button type="submit">🚀 Save Patient</button>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

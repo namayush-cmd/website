@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PDF OCR Extractor</title>
+    <style>
+        body {
+            font-family: Arial;
+            text-align: center;
+            margin-top: 50px;
+        }
+        .box {
+            border: 2px dashed #aaa;
+            padding: 30px;
+            width: 400px;
+            margin: auto;
+        }
+        textarea {
+            width: 80%;
+            height: 300px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>📄 Upload PDF for Text Extraction</h2>
+
+    <div class="box">
+        <input type="file" id="fileInput" />
+        <br><br>
+        <button onclick="uploadFile()">Extract Text</button>
+    </div>
+
+    <textarea id="output" placeholder="Extracted text will appear here..."></textarea>
+
+    <script>
+        function uploadFile() {
+            let fileInput = document.getElementById("fileInput");
+            let file = fileInput.files[0];
+
+            let formData = new FormData();
+            formData.append("file", file);
+
+            fetch("http://127.0.0.1:5000/upload", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+			.then(data => {
+				document.getElementById("output").value =
+					"RAW TEXT:\n\n" + data.raw_text +
+					"\n\n---------------------\n\n" +
+					"EXTRACTED DATA:\n" +
+					"Name: " + data.extracted_data.name + "\n" +
+					"DOB: " + data.extracted_data.dob + "\n" +
+					"Phone: " + data.extracted_data.phone + "\n" +
+					"Email: " + data.extracted_data.email;
+			})
+            .catch(error => {
+                alert("Error: " + error);
+            });
+        }
+    </script>
+
+</body>
+</html>
+

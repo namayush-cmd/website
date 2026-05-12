@@ -1,0 +1,155 @@
+<style>
+#summaryTable {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 14px;
+    margin-top: 15px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* Header */
+#summaryTable th {
+    background: linear-gradient(45deg, #28a745, #00c851);
+    color: white;
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: center;
+}
+
+/* Rows */
+#summaryTable td {
+    padding: 8px;
+    border: 1px solid #ddd;
+    text-align: center;
+}
+
+/* Alternate row */
+#summaryTable tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+/* Hover effect */
+#summaryTable tr:hover {
+    background-color: #e6ffe6;
+    transition: 0.3s;
+}
+
+/* State column */
+#summaryTable td:first-child {
+    text-align: left;
+    font-weight: 500;
+}
+
+/* Grand Total Row */
+#grandTotalRow {
+    background-color: #343a40;
+    color: white;
+    font-weight: bold;
+}
+</style>
+
+<h3>Overall State Summary</h3>
+
+<table id="summaryTable" border="1">
+<thead>
+<tr>
+<th>S.No.</th>
+<th>State</th>
+<th>Ayush Services</th>
+<th>Educational Institutions</th>
+<th>Medicinal Plants</th>
+<th>Quality Control</th>
+<th>Flexi Pool</th>
+<th>Admin Cost</th>
+<th>Total</th>
+</tr>
+</thead>
+<tbody></tbody>
+<tfoot>
+<tr id="grandTotalRow"></tr>
+</tfoot>
+</table>
+
+<script>
+function loadSummary(data) {
+
+    let tbody = document.querySelector("#summaryTable tbody");
+    let grand = [0,0,0,0,0,0];
+
+    let html = "";
+    let i = 1;
+
+    if (!data || Object.keys(data).length === 0) {
+        tbody.innerHTML = "<tr><td colspan='9'>No Data Found</td></tr>";
+        return;
+    }
+
+    let sortedStates = Object.keys(data).sort();
+
+    for (let state of sortedStates) {
+
+        let d = data[state] || {};
+
+        let values = [
+            Number(d["Ayush Services"] || 0),
+            Number(d["Educational Institutions"] || 0),
+            Number(d["Medicinal Plants"] || 0),
+            Number(d["Quality Control"] || 0),
+            Number(d["Flexi Pool"] || 0),
+            Number(d["Admin Cost"] || 0)
+        ];
+
+        let total = values.reduce((a,b)=>a+b,0);
+
+        html += `
+        <tr>
+            <td>${i++}</td>
+            <td>${state}</td>
+            ${values.map(v => `<td>${v.toFixed(2)}</td>`).join("")}
+            <td>${total.toFixed(2)}</td>
+        </tr>
+        `;
+
+        values.forEach((v, idx)=> grand[idx]+=v);
+    }
+
+    tbody.innerHTML = html;
+
+    document.getElementById("grandTotalRow").innerHTML = `
+        <td colspan="2"><b>Grand Total</b></td>
+        ${grand.map(x=>`<td>${x.toFixed(2)}</td>`).join("")}
+        <td>${grand.reduce((a,b)=>a+b,0).toFixed(2)}</td>
+    `;
+}
+
+
+// 🔥 ONLY ONE FETCH
+fetch("/report_data?t=" + Date.now())
+.then(res => res.json())
+.then(data => {
+
+    let summary = {};
+
+    for (let state in data) {
+
+        summary[state] = {
+            "Ayush Services": 0,
+            "Educational Institutions": 0,
+            "Medicinal Plants": 0,
+            "Quality Control": 0,
+            "Flexi Pool": 0,
+            "Admin Cost": 0
+        };
+
+        for (let year in data[state]) {
+            let d = data[state][year];
+
+            for (let key in d) {
+                summary[state][key] += d[key];
+            }
+        }
+    }
+
+    loadSummary(summary);
+});
+</script>
