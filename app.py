@@ -57,8 +57,18 @@ SCOPES_SHEET = [
     "https://www.googleapis.com/auth/drive"
 ]
 
-creds = service_account.Credentials.from_service_account_file(
-    "credentials.json",
+google_creds = json.loads(
+    os.environ["GOOGLE_CREDENTIALS"]
+)
+
+google_creds = json.loads(
+    os.environ["GOOGLE_CREDENTIALS"]
+)
+
+google_creds["private_key"] = google_creds["private_key"].replace("\\n", "\n")
+
+creds = service_account.Credentials.from_service_account_info(
+    google_creds,
     scopes=SCOPES_SHEET
 )
 
